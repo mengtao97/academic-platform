@@ -1,7 +1,11 @@
 const userResolvers = require('./user')
-
+const paperResolvers = require('./paper')
 module.exports = {
-    Mutation:{
-        ...userResolvers.Mutation
+    Query:{
+        ...paperResolvers.Query,
+    },
+    Mutation: {
+        ...userResolvers.Mutation,
+        ...paperResolvers.Mutation
     }
 }

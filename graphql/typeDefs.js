@@ -1,25 +1,33 @@
 const { gql } = require("apollo-server-express");
 
 module.exports = gql`
-    type Item {
+    type Paper {
         id: ID
-        Sch_name: String
         title: String
+        authors: [String]
+        keywords: [String]
+        lang: String
+        nCititation: Int
+        pageEnd: Int
+        pageStart: Int
+        venue: String
+        year: Int
+        volume: Int
+        issue: Int
+        doi: String
         abstract: String
-        references: String
-        field: String
     }
 
-    type User{
+    type User {
         id:ID!
-        email:String
+        email: String
         token: String
         name: String
         password: String
         avatar: String
         personalProfile: String
         paperCollection: [String]
-        schCollection:[String]
+        schCollection: [String]
         role: Boolean
         createdAt:String
     }
@@ -29,14 +37,31 @@ module.exports = gql`
         confirmPassword: String!
         email: String!
     }
-    type Query {
-        items: [Item]
+    input AddPaperInput{
+        title:String
+        authors:[String]
+        keywords:[String]
+        lang:String
+        nCititation:Int
+        pageEnd:Int
+        pageStart:Int
+        venue:Int
+        year:Int
+        volume:Int
+        issue:String
+        doi:String
+        abstract:String
+    }
+    type Query{
+        findPapersByAuthor:[Paper]
+        findPapersByKeywords:[Paper]
+        findPapersByTitle:[Paper]
     }
     type Mutation {
-        createItem(Sch_name: String, title: String, abstract: String, references: String, field: String): Item
-        deleteItem(itemId: ID): String
+        addPaper(addPaperInput:AddPaperInput):Paper
+        deletePaper:Boolean
         register(registerInput: RegisterInput): User
         login(email: String!, password: String!): User
-
+        updateUserInfo(name: String,password: String,email: String,avatar: String,personalProfile: String,role: Boolean):User
     }
 `;

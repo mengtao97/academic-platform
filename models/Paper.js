@@ -2,7 +2,7 @@ const { model, Schema } = require('mongoose');
 
 const paperSchema = new Schema({
     title: String,
-    authors: [{ id: { type: String, ref: 'Scholar' } }],
+    authors: [String],//[{ id: { type: String, ref: 'Scholar' } }],
     keywords: [String],
     lang: String,
     nCititation: Number,

@@ -1,13 +1,13 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { UserInputError } = require('apollo-server');
-
+const checkAuth = require('../../util/check-auth')
 const {
   validateRegisterInput,
   validateLoginInput
 } = require('../../util/validators');
 require('dotenv').config();
-const SECRET_KEY  =  process.env.SECRET_KEY;
+const SECRET_KEY = process.env.SECRET_KEY;
 const User = require('../../models/User');
 
 function generateToken(user) {
@@ -20,6 +20,24 @@ function generateToken(user) {
     SECRET_KEY,
     { expiresIn: '1h' }
   );
+}
+
+function removeUndefinedKeys(obj) {
+  const keys = Object.keys(obj);
+  const result = {};
+  for (const key of keys) {
+    if (obj[key] !== undefined && obj[key] !== null)
+      result[key] = obj[key];
+  }
+  return result;
+}
+
+function updateFields(oldObj, newObj) {
+  const keys = Object.keys(newObj), oldKeys = Object.keys(oldObj.toObject());
+  console.log(oldObj.toObject());
+  for (const key of keys) {
+    oldObj[key] = newObj[key];
+  }
 }
 
 module.exports = {
@@ -95,6 +113,36 @@ module.exports = {
         id: res._id,
         token
       };
+    },
+    updateUserInfo: async function (_, {
+      _id,
+      name,
+      password,
+      email,
+      avatar,
+      personalProfile,
+      role
+    }, context) {
+
+      const currentId = checkAuth(context).id;
+      const isRoot = !!((await User.findById(currentId)).role);
+
+      if (!_id)
+        _id = currentId;
+      if (!isRoot && currentId != _id || !isRoot && role)
+        throw new UserInputError('Permission denied');
+
+      const user = await User.findById(_id);
+      const updateParameters = removeUndefinedKeys(arguments[1]);
+      if (updateParameters.email) {
+        const regEx = /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/;
+        if (!email.match(regEx)) {
+          throw new UserInputError('Email must be a valid email address');
+        }
+      }
+      updateFields(user, updateParameters);
+      user.save();
+      return user;
     }
   }
 };
