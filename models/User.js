@@ -5,9 +5,11 @@ const userSchema = new Schema({
     password: String,
     email: String,
     avatar: String,
-    personal_profile: String,
-    favorites: [String],  
-    role: Boolean
+    personalProfile: String,
+    paperCollection: [String],
+    schCollection:[String],
+    role: Boolean,
+    createdAt: String
 });
 
-module.exports = model("User", userSchema);
+module.exports = model('User', userSchema);
