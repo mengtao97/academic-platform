@@ -49,7 +49,12 @@ module.exports = gql`
     }
 
     type Pub {
-        r: ID
+        r: ID!
+        i: Int
+    }
+    
+    input PubInput {
+        r: ID!
         i: Int
     }
 
@@ -75,6 +80,7 @@ module.exports = gql`
         nCitations: Int
         researchField: [String] = []
         hIndex: Int
+        pubs: [PubInput] = []
         tags: [String] = []
         createdAt: String
     }
@@ -89,9 +95,6 @@ module.exports = gql`
     type Query{
         getPapers: [Paper]
         getPaper(paperId: ID): Paper
-        findPapersByAuthor: [Paper]
-        findPapersByKeywords: [Paper]
-        findPapersByTitle: [Paper]
 
         getScholars: [Scholar]
         getScholar(scholarId: ID): Scholar
@@ -109,7 +112,5 @@ module.exports = gql`
         createScholar(input: ScholarInput): Scholar
         deleteScholar(scholarId: ID): String
         updateScholar(scholarId: ID, input: ScholarInput): Scholar
-        createScholarPub(scholarId: ID, paperId: ID, i: Int): Scholar
-        deleteScholarPub(scholarId: ID, paperId: ID): Scholar
     }
 `;

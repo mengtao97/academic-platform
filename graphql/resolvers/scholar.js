@@ -4,6 +4,10 @@ const {
 
 const Scholar = require("../../models/Scholar");
 
+const removeEmpty = obj => {
+    Object.keys(obj).forEach(key => obj[key] == null && delete obj[key]);
+};
+
 module.exports = {
     Query: {
         getScholars: async () => await Scholar.find(),
@@ -25,32 +29,8 @@ module.exports = {
         },
         updateScholar: async (_, {scholarId, input}) => {
             const scholar = await Scholar.findById(scholarId);
-            scholar.assign(input);
+            scholar.assign(removeEmpty(input));
             return await scholar.save();
-        },
-        createScholarPub: async (_, {scholarId, paperId, i}) => {
-            const scholar = await Scholar.findById(scholarId);
-            if (scholar) {
-                const pubIndex = scholar.pubs.findIndex(p => p.r === paperId);
-                pub = scholar.pubs[pubIndex];
-                if (pub) return scholar;
-                scholar.pubs.unshift({
-                    r: paperId,
-                    i: i
-                });
-                return await scholar.save();
-            } else throw new UserInputError("Scholar not found");
-        },
-        deleteScholarPub: async (_, {scholarId, paperId}) => {
-            const scholar = await Scholar.findById(scholarId);
-            if (scholar) {
-                const pubIndex = scholar.pubs.findIndex(p => p.r === paperId);
-                pub = scholar.pubs[pubIndex];
-                if (pub) {
-                    scholar.pubs.splice(pubIndex, 1);
-                    return await scholar.save();
-                } else throw new UserInputError("Pub not found");
-            } else throw new UserInputError("Scholar not found");
         }
     }
 }
