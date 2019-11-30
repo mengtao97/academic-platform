@@ -1,4 +1,4 @@
-const { gql } = require("apollo-server-express");
+const {gql} = require("apollo-server-express");
 
 module.exports = gql`
     type Paper {
@@ -52,6 +52,7 @@ module.exports = gql`
         doi:String
         abstract:String
     }
+    
     type Query{
         findPapersByAuthor:[Paper]
         findPapersByKeywords:[Paper]

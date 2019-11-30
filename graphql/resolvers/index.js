@@ -1,7 +1,7 @@
 const userResolvers = require('./user')
 const paperResolvers = require('./paper')
 module.exports = {
-    Query:{
+    Query: {
         ...paperResolvers.Query,
     },
     Mutation: {

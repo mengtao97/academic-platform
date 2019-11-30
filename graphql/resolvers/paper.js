@@ -17,6 +17,7 @@ function updateFields(oldObj, newObj) {
         oldObj[key] = newObj[key];
     }
 }
+
 module.exports = {
     Query: {
         findPapersByAuthor: () => {
@@ -31,7 +32,7 @@ module.exports = {
     },
     Mutation: {
         async addPaper(
-            _, { addPaperInput }, context, info
+            _, {addPaperInput}, context, info
         ) {
             const par = removeUndefinedKeys(addPaperInput);
             const newpaper = new Paper(par);

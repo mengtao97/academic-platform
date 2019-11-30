@@ -1,8 +1,8 @@
-const { model, Schema } = require("mongoose");
+const {model, Schema} = require("mongoose");
 
 const commentSchema = new Schema({
-    userId: { type: String, ref: 'User' },
-    itemId: { type: String, ref: 'Paper' },
+    userId: {type: String, ref: 'User'},
+    itemId: {type: String, ref: 'Paper'},
     content: String,
     date: String
 });
