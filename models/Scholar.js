@@ -9,7 +9,7 @@ const scholarSchema = new Schema({
     researchField: [String],
     hIndex: Number,
     pubs: [{
-        r: {type: String, ref: 'Paper'},
+        r: {type: Schema.Types.ObjectId, ref: 'Paper'},
         i: Number,
     }],
     tags: [String]

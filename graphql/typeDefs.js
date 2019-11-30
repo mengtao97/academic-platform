@@ -31,12 +31,33 @@ module.exports = gql`
         role: Boolean
         createdAt:String
     }
+
+    type Pub {
+        r: Paper
+        i: Int
+    }
+
+    type Scholar {
+        id: ID!
+        name: String
+        avatar: String
+        orgs: String
+        nPubs: Int
+        nCitations: Int
+        researchField: [String]
+        hIndex: Int
+        pubs: [Pub]
+        tags: [String]
+        createdAt: String
+    }
+
     input RegisterInput {
         name: String!
         password: String!
         confirmPassword: String!
         email: String!
     }
+
     input AddPaperInput{
         title:String
         authors:[String]
@@ -52,17 +73,22 @@ module.exports = gql`
         doi:String
         abstract:String
     }
-    
+
     type Query{
         findPapersByAuthor:[Paper]
         findPapersByKeywords:[Paper]
         findPapersByTitle:[Paper]
     }
     type Mutation {
-        addPaper(addPaperInput:AddPaperInput):Paper
+        addPaper(addPaperInput: AddPaperInput):Paper
         deletePaper:Boolean
         register(registerInput: RegisterInput): User
         login(email: String!, password: String!): User
-        updateUserInfo(name: String,password: String,email: String,avatar: String,personalProfile: String,role: Boolean):User
+        updateUserInfo(name: String, password: String, email: String,avatar: String, personalProfile: String, role: Boolean): User
+        createScholar(name: String, avatar: String, orgs: String, nPubs: Int, nCitations: Int, researchField: [String], hIndex: Int, tags: [String]): Scholar
+        deleteScholar(scholarId: ID): String
+        updateScholar(scholarId: ID, name: String, avatar: String, orgs: String, nPubs: Int, nCitations: Int, researchField: [String], hIndex: Int, tags: [String]): Scholar
+        createScholarPub(scholarId: ID, paperId: ID, i: Int): Scholar
+        deleteScholarPub(scholarId: ID, paperId: ID): Scholar
     }
 `;
