@@ -7,7 +7,7 @@ const Scholar = require("../../models/Scholar");
 
 module.exports = {
     Query: {
-        getScholars: async () => await Scholar.find().({createdAt: -1}),
+        getScholars: async () => await Scholar.find(),
         getScholar: async (_, {scholarId}) => await Scholar.findById(scholarId)
     },
     Mutation: {
@@ -23,13 +23,13 @@ module.exports = {
                 pubs: [],
                 tags: tags,
                 createdAt: new Date().toISOString()
-            })
+            });
             return await newScholar.save();
         },
         deleteScholar: async (_, {scholarId}) => {
             const scholar = await Scholar.findById(scholarId);
-            await movie.delete();
-            return "Movie deleted successfully";
+            await scholar.delete();
+            return "Scholar deleted successfully";
         },
         updateScholar: async (_, { scholarId, name, avatar, orgs, nPubs, nCitations, researchField, hIndex, tags}) => {
             const scholar = await Scholar.findById(scholarId);
@@ -45,11 +45,16 @@ module.exports = {
         },
         createScholarPub: async (_, { scholarId, paperId, i }) => {
             const scholar = await Scholar.findById(scholarId);
-            scholar.pubs.push({
-                r: paperId,
-                i: i
-            });
-            return await scholar.save();
+            if (scholar) {
+                const pubIndex = scholar.pubs.findIndex(p => p.r === paperId);
+                pub = scholar.pubs[pubIndex];
+                if (pub) return scholar;
+                scholar.pubs.unshift({
+                    r: paperId,
+                    i: i
+                });
+                return await scholar.save();
+            } else throw new UserInputError("Scholar not found");
         },
         deleteScholarPub: async (_, { scholarId, paperId }) => {
             const scholar = await Scholar.findById(scholarId);

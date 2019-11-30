@@ -33,7 +33,7 @@ module.exports = gql`
     }
 
     type Pub {
-        r: Paper
+        r: ID
         i: Int
     }
 
@@ -58,7 +58,7 @@ module.exports = gql`
         email: String!
     }
 
-    input AddPaperInput{
+    input CreatePaperInput{
         title:String
         authors:[String]
         keywords:[String]
@@ -75,12 +75,14 @@ module.exports = gql`
     }
 
     type Query{
-        findPapersByAuthor:[Paper]
-        findPapersByKeywords:[Paper]
-        findPapersByTitle:[Paper]
+        findPapersByAuthor: [Paper]
+        findPapersByKeywords: [Paper]
+        findPapersByTitle: [Paper]
+        getScholars: [Scholar]
+        getScholar(scholarId: ID): Scholar
     }
     type Mutation {
-        addPaper(addPaperInput: AddPaperInput):Paper
+        createPaper(createPaperInput: CreatePaperInput):Paper
         deletePaper:Boolean
         register(registerInput: RegisterInput): User
         login(email: String!, password: String!): User

@@ -31,10 +31,8 @@ module.exports = {
         }
     },
     Mutation: {
-        async addPaper(
-            _, {addPaperInput}, context, info
-        ) {
-            const par = removeUndefinedKeys(addPaperInput);
+        async createPaper(_, {createPaperInput}) {
+            const par = removeUndefinedKeys(createPaperInput);
             const newpaper = new Paper(par);
             const paper = await newpaper.save();
             return {
