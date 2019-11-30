@@ -12,7 +12,8 @@ const scholarSchema = new Schema({
         r: {type: Schema.Types.ObjectId, ref: 'Paper'},
         i: Number,
     }],
-    tags: [String]
+    tags: [String],
+    createdAt: String
 });
 
 module.exports = model("Scholar", scholarSchema);

@@ -1,10 +1,10 @@
 const {model, Schema} = require("mongoose");
 
 const commentSchema = new Schema({
-    userId: {type: String, ref: 'User'},
-    itemId: {type: String, ref: 'Paper'},
-    content: String,
-    date: String
+    userId: {type: Schema.Types.ObjectId, ref: 'User'},
+    paperId: {type: Schema.Types.ObjectId, ref: 'Paper'},
+    body: String,
+    createdAt: String
 });
 
-module.exports = model("Comment", authenticationSchema);
+module.exports = model("Comment", commentSchema);

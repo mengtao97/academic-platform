@@ -1,9 +1,9 @@
 const {model, Schema} = require("mongoose");
 
 const collectionSchema = new Schema({
-    schId: {type: String, ref: 'Scholar'},
-    useId: {type: String, ref: 'User'},
-    date: String,
+    scholarId: {type: Schema.Types.ObjectId, ref: 'Scholar'},
+    userId: {type: Schema.Types.ObjectId, ref: 'User'},
+    createdAt: String,
 });
 
 module.exports = model("Collection", collectionSchema);

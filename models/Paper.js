@@ -14,6 +14,7 @@ const paperSchema = new Schema({
     issue: Number,
     doi: String,
     abstract: String,
+    createdAt: String
 });
 
 
