@@ -4,14 +4,6 @@ const removeEmpty = obj => {
     Object.keys(obj).forEach(key => obj[key] == null && delete obj[key]);
 };
 
-function updateFields(oldObj, newObj) {
-    const keys = Object.keys(newObj), oldKeys = Object.keys(oldObj.toObject());
-    console.log(oldObj.toObject());
-    for (const key of keys) {
-        oldObj[key] = newObj[key];
-    }
-}
-
 module.exports = {
     Query: {
         getPapers: async () => await Paper.find(),

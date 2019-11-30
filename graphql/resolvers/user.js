@@ -22,23 +22,9 @@ function generateToken(user) {
     );
 }
 
-function removeUndefinedKeys(obj) {
-    const keys = Object.keys(obj);
-    const result = {};
-    for (const key of keys) {
-        if (obj[key] !== undefined && obj[key] !== null)
-            result[key] = obj[key];
-    }
-    return result;
-}
-
-function updateFields(oldObj, newObj) {
-    const keys = Object.keys(newObj), oldKeys = Object.keys(oldObj.toObject());
-    console.log(oldObj.toObject());
-    for (const key of keys) {
-        oldObj[key] = newObj[key];
-    }
-}
+const removeEmpty = obj => {
+    Object.keys(obj).forEach(key => obj[key] == null && delete obj[key]);
+};
 
 module.exports = {
     Mutation: {
@@ -133,16 +119,15 @@ module.exports = {
                 throw new UserInputError('Permission denied');
 
             const user = await User.findById(_id);
-            const updateParameters = removeUndefinedKeys(arguments[1]);
+            const updateParameters = removeEmpty(arguments[1]);
             if (updateParameters.email) {
                 const regEx = /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/;
                 if (!email.match(regEx)) {
                     throw new UserInputError('Email must be a valid email address');
                 }
             }
-            updateFields(user, updateParameters);
-            user.save();
-            return user;
+            user.assign(updateParameters);
+            return await user.save();
         }
     }
 };
