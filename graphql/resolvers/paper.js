@@ -1,14 +1,8 @@
 const Paper = require('../../models/Paper');
 
-function removeUndefinedKeys(obj) {
-    const keys = Object.keys(obj);
-    const result = {};
-    for (const key of keys) {
-        if (obj[key] !== undefined && obj[key] !== null)
-            result[key] = obj[key];
-    }
-    return result;
-}
+const removeEmpty = obj => {
+    Object.keys(obj).forEach(key => obj[key] == null && delete obj[key]);
+};
 
 function updateFields(oldObj, newObj) {
     const keys = Object.keys(newObj), oldKeys = Object.keys(oldObj.toObject());
@@ -20,6 +14,8 @@ function updateFields(oldObj, newObj) {
 
 module.exports = {
     Query: {
+        getPapers: async () => await Paper.find(),
+        getPaper: async (_, {paperId}) => await Paper.findById(paperId),
         findPapersByAuthor: () => {
 
         },
@@ -31,17 +27,19 @@ module.exports = {
         }
     },
     Mutation: {
-        async createPaper(_, {createPaperInput}) {
-            const par = removeUndefinedKeys(createPaperInput);
-            const newpaper = new Paper(par);
-            const paper = await newpaper.save();
-            return {
-                ...paper._doc,
-                id: paper._id
-            };
+        async createPaper(_, {input}) {
+            const newPaper = new Paper(input);
+            return await newPaper.save();
         },
-        deletePaper: () => {
-
-        }
+        deletePaper: async (_, {paperId}) => {
+            const paper = await Paper.findById(paperId);
+            await paper.delete();
+            return "Paper deleted successfully";
+        },
+        updatePaper: async (_, {paperId, input}) => {
+            const paper = await Paper.findById(paperId);
+            paper.assign(input);
+            return await paper.save();
+        },
     }
 };

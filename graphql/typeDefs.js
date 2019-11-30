@@ -2,10 +2,26 @@ const {gql} = require("apollo-server-express");
 
 module.exports = gql`
     type Paper {
-        id: ID
+        id: ID!
         title: String
         authors: [String]
         keywords: [String]
+        lang: String
+        nCititation: Int
+        pageEnd: Int
+        pageStart: Int
+        venue: String
+        year: Int
+        volume: Int
+        issue: Int
+        doi: String
+        abstract: String
+    }
+
+    input PaperInput{
+        title: String
+        authors: [String] = []
+        keywords: [String] = []
         lang: String
         nCititation: Int
         pageEnd: Int
@@ -50,6 +66,18 @@ module.exports = gql`
         tags: [String]
         createdAt: String
     }
+    
+    input ScholarInput {
+        name: String
+        avatar: String
+        orgs: String
+        nPubs: Int
+        nCitations: Int
+        researchField: [String] = []
+        hIndex: Int
+        tags: [String] = []
+        createdAt: String
+    }
 
     input RegisterInput {
         name: String!
@@ -58,38 +86,29 @@ module.exports = gql`
         email: String!
     }
 
-    input CreatePaperInput{
-        title:String
-        authors:[String]
-        keywords:[String]
-        lang:String
-        nCititation:Int
-        pageEnd:Int
-        pageStart:Int
-        venue:Int
-        year:Int
-        volume:Int
-        issue:String
-        doi:String
-        abstract:String
-    }
-
     type Query{
+        getPapers: [Paper]
+        getPaper(paperId: ID): Paper
         findPapersByAuthor: [Paper]
         findPapersByKeywords: [Paper]
         findPapersByTitle: [Paper]
+
         getScholars: [Scholar]
         getScholar(scholarId: ID): Scholar
     }
+
     type Mutation {
-        createPaper(createPaperInput: CreatePaperInput):Paper
-        deletePaper:Boolean
+        createPaper(input: PaperInput): Paper
+        deletePaper(paperId: ID!): String
+        updatePaper(paperId: ID!, input: PaperInput): Paper
+        
         register(registerInput: RegisterInput): User
         login(email: String!, password: String!): User
         updateUserInfo(name: String, password: String, email: String,avatar: String, personalProfile: String, role: Boolean): User
-        createScholar(name: String, avatar: String, orgs: String, nPubs: Int, nCitations: Int, researchField: [String], hIndex: Int, tags: [String]): Scholar
+
+        createScholar(input: ScholarInput): Scholar
         deleteScholar(scholarId: ID): String
-        updateScholar(scholarId: ID, name: String, avatar: String, orgs: String, nPubs: Int, nCitations: Int, researchField: [String], hIndex: Int, tags: [String]): Scholar
+        updateScholar(scholarId: ID, input: ScholarInput): Scholar
         createScholarPub(scholarId: ID, paperId: ID, i: Int): Scholar
         deleteScholarPub(scholarId: ID, paperId: ID): Scholar
     }

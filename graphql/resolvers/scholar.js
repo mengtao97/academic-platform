@@ -1,5 +1,4 @@
 const {
-    AuthenticationError,
     UserInputError
 } = require("apollo-server-express");
 
@@ -11,19 +10,12 @@ module.exports = {
         getScholar: async (_, {scholarId}) => await Scholar.findById(scholarId)
     },
     Mutation: {
-        createScholar: async (_, {name, avatar, orgs, nPubs, nCitations, researchField, hIndex, tags}) => {
+        createScholar: async (_, {input}) => {
             const newScholar = new Scholar({
-                name: name,
-                avatar: avatar,
-                orgs: orgs,
-                nPubs: nPubs,
-                nCitations: nCitations,
-                researchField: researchField,
-                hIndex: hIndex,
+                ...input,
                 pubs: [],
-                tags: tags,
                 createdAt: new Date().toISOString()
-            });
+            })
             return await newScholar.save();
         },
         deleteScholar: async (_, {scholarId}) => {
@@ -31,19 +23,12 @@ module.exports = {
             await scholar.delete();
             return "Scholar deleted successfully";
         },
-        updateScholar: async (_, { scholarId, name, avatar, orgs, nPubs, nCitations, researchField, hIndex, tags}) => {
+        updateScholar: async (_, {scholarId, input}) => {
             const scholar = await Scholar.findById(scholarId);
-            scholar.name = name;
-            scholar.avatar = avatar;
-            scholar.orgs = orgs;
-            scholar.nPubs = nPubs;
-            scholar.nCitations = nCitations;
-            scholar.researchField = researchField;
-            scholar.hIndex = hIndex;
-            scholar.tags = tags;
+            scholar.assign(input);
             return await scholar.save();
         },
-        createScholarPub: async (_, { scholarId, paperId, i }) => {
+        createScholarPub: async (_, {scholarId, paperId, i}) => {
             const scholar = await Scholar.findById(scholarId);
             if (scholar) {
                 const pubIndex = scholar.pubs.findIndex(p => p.r === paperId);
@@ -56,7 +41,7 @@ module.exports = {
                 return await scholar.save();
             } else throw new UserInputError("Scholar not found");
         },
-        deleteScholarPub: async (_, { scholarId, paperId }) => {
+        deleteScholarPub: async (_, {scholarId, paperId}) => {
             const scholar = await Scholar.findById(scholarId);
             if (scholar) {
                 const pubIndex = scholar.pubs.findIndex(p => p.r === paperId);
