@@ -1,6 +1,6 @@
 module.exports = () => {
     const fs = require("fs");
-    const content = fs.readFileSync("/home/ubuntu/academic-platform/data/data.json", "utf8");
+    const content = fs.readFileSync("/home/ubuntu/truncated_snowball.json", "utf8");
     const rawData = JSON.parse(content);
     const authorKeys = Object.keys(rawData.authors);
     const authors = authorKeys.map(el => rawData.authors[el]);

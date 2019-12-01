@@ -16,4 +16,4 @@ const scholarSchema = new Schema({
     createdAt: String
 });
 
-module.exports = model("Scholar", scholarSchema);
+module.exports = new model("Scholar", scholarSchema);
