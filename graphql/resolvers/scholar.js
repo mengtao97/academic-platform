@@ -29,7 +29,7 @@ module.exports = {
         },
         updateScholar: async (_, {scholarId, input}) => {
             const scholar = await Scholar.findById(scholarId);
-            scholar.assign(removeEmpty(input));
+            Object.assign(scholar, input);
             return await scholar.save();
         }
     }

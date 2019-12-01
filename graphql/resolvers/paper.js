@@ -1,9 +1,5 @@
 const Paper = require('../../models/Paper');
 
-const removeEmpty = obj => {
-    Object.keys(obj).forEach(key => obj[key] == null && delete obj[key]);
-};
-
 module.exports = {
     Query: {
         getPapers: async () => await Paper.find(),
@@ -21,7 +17,7 @@ module.exports = {
         },
         async updatePaper (_, {paperId, input}) {
             const paper = await Paper.findById(paperId);
-            paper.assign(removeEmpty(input));
+            Object.assign(paper, input);
             return await paper.save();
         },
     }

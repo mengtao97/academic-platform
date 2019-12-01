@@ -1,9 +1,5 @@
 const Collection = require('../../models/Collection');
 
-const removeEmpty = obj => {
-    Object.keys(obj).forEach(key => obj[key] == null && delete obj[key]);
-};
-
 module.exports = {
     Query: {
         getCollections: async () => await Collection.find(),
@@ -21,7 +17,7 @@ module.exports = {
         },
         async updateCollection (_, {collectionId, input}) {
             const collection = await Collection.findById(collectionId);
-            collection.assign(removeEmpty(input));
+            Object.assign(collection, input);
             return await collection.save();
         },
     }

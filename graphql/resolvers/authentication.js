@@ -1,9 +1,5 @@
 const Authentication = require('../../models/Authentication');
 
-const removeEmpty = obj => {
-    Object.keys(obj).forEach(key => obj[key] == null && delete obj[key]);
-};
-
 module.exports = {
     Query: {
         getAuthentications: async () => await Authentication.find(),
@@ -21,7 +17,7 @@ module.exports = {
         },
         async updateAuthentication (_, {authenticationId, input}) {
             const authentication = await Authentication.findById(authenticationId);
-            authentication.assign(removeEmpty(input));
+            Object.assign(authentication, input);
             return await authentication.save();
         },
     }

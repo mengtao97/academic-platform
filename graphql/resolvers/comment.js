@@ -1,9 +1,5 @@
 const Comment = require('../../models/Comment');
 
-const removeEmpty = obj => {
-    Object.keys(obj).forEach(key => obj[key] == null && delete obj[key]);
-};
-
 module.exports = {
     Query: {
         getComments: async () => await Comment.find(),
@@ -21,7 +17,7 @@ module.exports = {
         },
         async updateComment (_, {commentId, input}) {
             const comment = await Comment.findById(commentId);
-            comment.assign(removeEmpty(input));
+            Object.assign(comment, input);
             return await comment.save();
         },
     }

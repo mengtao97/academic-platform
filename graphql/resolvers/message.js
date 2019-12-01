@@ -1,9 +1,5 @@
 const Message = require('../../models/Message');
 
-const removeEmpty = obj => {
-    Object.keys(obj).forEach(key => obj[key] == null && delete obj[key]);
-};
-
 module.exports = {
     Query: {
         getMessages: async () => await Message.find(),
@@ -21,7 +17,7 @@ module.exports = {
         },
         async updateMessage (_, {messageId, input}) {
             const message = await Message.findById(messageId);
-            message.assign(removeEmpty(input));
+            Object.assign(message, input);
             return await message.save();
         },
     }
