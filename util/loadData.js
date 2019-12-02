@@ -1,27 +1,6 @@
-// const fs = require("fs");
-// const content = fs.readFileSync("C:\\Users\\mtttt\\学习\\BUAA\\大三上\\软件系统分析与设计\\大作业\\Code\\academic-platform\\data\\data.json", "utf8");
-// const rawData = JSON.parse(content);
-// const authorKeys = Object.keys(rawData.authors);
-// const authors = authorKeys.map(el => rawData.authors[el]);
-// const transformedAuthors = authors.map(author => (
-//     {
-//         name: author.name,
-//         nPubs: author.n_pubs,
-//         _id: author.id,
-//         orgs: author.orgs,
-//         nPubs: author.pubs,
-//         tags: author.tags,
-//         pubs: author.pubs,
-//         nCitations: author.n_citation,
-//         hIndex: author.h_index,
-//         pubs: author.pubs,
-//         avatar: "",
-//     }));
-// console.log(transformedAuthors[0]);
-
 module.exports = () => {
     const fs = require("fs");
-    const content = fs.readFileSync("C:\\Users\\mtttt\\学习\\BUAA\\大三上\\软件系统分析与设计\\大作业\\Code\\academic-platform\\data\\data.json", "utf8");
+    const content = fs.readFileSync("/home/ubuntu/truncated_snowball.json", "utf8");
     const rawData = JSON.parse(content);
     const authorKeys = Object.keys(rawData.authors);
     const authors = authorKeys.map(el => rawData.authors[el]);
@@ -71,4 +50,3 @@ module.exports = () => {
     });
     return [transformedAuthors, transformedPapers];
 };
-
