@@ -1,7 +1,7 @@
 const {model, Schema} = require("mongoose");
 
 const collectionSchema = new Schema({
-    scholarId: {type: Schema.Types.ObjectId, ref: 'Scholar'},
+    paperId: {type: Schema.Types.ObjectId, ref: 'Paper'},
     userId: {type: Schema.Types.ObjectId, ref: 'User'},
     createdAt: String,
 });

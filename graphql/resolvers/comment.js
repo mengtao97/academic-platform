@@ -2,8 +2,17 @@ const Comment = require('../../models/Comment');
 
 module.exports = {
     Query: {
-        getComments: async () => await Comment.find(),
-        getComment: async (_, {commentId}) => await Comment.findById(commentId),
+        Comments: async (_, { id, userId, paperId }) => {
+            if (!!id)
+                return [await Comment.findById(id)];
+            if (!!userId) {
+                return await Comment.find({ userId: { $eq: userId } });
+            }
+            if (!!paperId)
+                return await Comment.find({ paperId });
+            else
+                return Comment.find();
+        }
     },
     Mutation: {
         async createComment(_, {input}) {
@@ -15,7 +24,7 @@ module.exports = {
             await comment.delete();
             return "Comment deleted successfully";
         },
-        async updateComment (_, {commentId, input}) {
+        async Comment (_, {commentId, input}) {
             const comment = await Comment.findById(commentId);
             Object.assign(comment, input);
             return await comment.save();

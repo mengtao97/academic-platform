@@ -2,23 +2,31 @@ const Collection = require('../../models/Collection');
 
 module.exports = {
     Query: {
-        getCollections: async () => await Collection.find(),
-        getCollection: async (_, {collectionId}) => await Collection.findById(collectionId),
+        Collections: async (_, { id, userId, paperId }) => {
+            if (!!id)
+                return [await Collection.findById(id)];
+            if (!!userId) {
+                return await Collection.find({ userId: { $eq: userId } });
+            }
+            if (!!paperId)
+                return await Collection.find({ paperId });
+            else
+                return Collection.find();
+        }
     },
     Mutation: {
-        async createCollection(_, {input}) {
+        async createCollection(_, { params }) {
+            const input = {
+                ...params,
+                createdAt: new Date().getTime().toString()
+            };
             const newCollection = new Collection(input);
             return await newCollection.save();
         },
-        async deleteCollection (_, {collectionId}) {
-            const collection = await Collection.findById(collectionId);
+        async deleteCollection(_, { id }) {
+            const collection = await Collection.findById(id);
             await collection.delete();
             return "Collection deleted successfully";
-        },
-        async updateCollection (_, {collectionId, input}) {
-            const collection = await Collection.findById(collectionId);
-            Object.assign(collection, input);
-            return await collection.save();
         },
     }
 };

@@ -13,6 +13,7 @@ const pubsub = new PubSub();
 const server = new ApolloServer({
     typeDefs,
     resolvers,
+    debug: process.env.NODE_ENV !== 'production',
     context: ({req}) => ({req, pubsub})
 });
 

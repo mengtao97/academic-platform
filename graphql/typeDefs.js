@@ -1,6 +1,7 @@
 const {gql} = require("apollo-server-express");
 
 module.exports = gql`
+
     type Authentication {
         id: ID!
         createdAt: String
@@ -8,25 +9,26 @@ module.exports = gql`
         managerId: ID
         scholarId: ID
         state: String
-        feedback: String
-
+        content: String
     }
+
     input AuthenticationInput {
         userId: ID
         managerId: ID
         scholarId: ID
         state: String
-        feedback: String
+        content: String
     }
 
     type Collection {
         id: ID!
         createdAt: String
-        scholarId: ID
+        paperId: ID
         userId: ID
     }
+
     input CollectionInput {
-        scholarId: ID
+        paperId: ID
         userId: ID
     }
 
@@ -37,6 +39,7 @@ module.exports = gql`
         paperId: ID
         body: String
     }
+
     input CommentInput {
         userId: ID
         paperId: ID
@@ -50,6 +53,7 @@ module.exports = gql`
         receiverId: ID
         content: String
     }
+
     input MessageInput {
         senderId: ID
         receiverId: ID
@@ -73,6 +77,7 @@ module.exports = gql`
         doi: String
         abstract: String
     }
+
     input PaperInput{
         title: String
         authors: [String]
@@ -93,6 +98,7 @@ module.exports = gql`
         r: ID!
         i: Int
     }
+
     input PubInput {
         r: ID!
         i: Int
@@ -111,6 +117,7 @@ module.exports = gql`
         pubs: [Pub]
         tags: [String]
     }
+
     input ScholarInput {
         name: String
         avatar: String
@@ -145,51 +152,47 @@ module.exports = gql`
     }
 
     type Query{
-        getAuthentications: [Authentication]
-        getAuthentication(authenticationId: ID): Authentication
+        Authentications(authenticationId: ID): [Authentication]
         
-        getCollections: [Collection]
-        getCollection(collectionId: ID): Collection
+        Collections(collectionId: ID, userId: ID, paperId: ID): [Collection]
         
-        getComments: [Comment]
-        getComment(commentId: ID): Comment
+        Comments(commentId: ID, userId: ID, paperId: ID): [Comment]
         
-        getMessages: [Message]
-        getMessage(messageId: ID): Message
+        recentContacts: [User]
+        messages(idA: ID, idB: ID): [Message]
         
-        getPapers: [Paper]
-        getPaper(paperId: ID): Paper
-
+        Papers(params: String): [Paper]
+        getPapers:[Paper]
         getScholars: [Scholar]
         getScholar(scholarId: ID): Scholar
+
     }
 
     type Mutation {
-        createAuthentication(input: AuthenticationInput): Authentication
+        createAuthentication(params: AuthenticationInput): Authentication
         deleteAuthentication(authenticationId: ID!): String
-        updateAuthentication(authenticationId: ID!, input: AuthenticationInput): Authentication
 
-        createCollection(input: CollectionInput): Collection
-        deleteCollection(collectionId: ID!): String
-        updateCollection(collectionId: ID!, input: CollectionInput): Collection
+        "创建一个学者主页申请。"
+        Authentication(authenticationId: ID!, params: AuthenticationInput): Authentication
 
-        createComment(input: CommentInput): Comment
-        deleteComment(commentId: ID!): String
-        updateComment(commentId: ID!, input: CommentInput): Comment
+        createCollection(params: CollectionInput): Collection
+        deleteCollection(id: ID!): String
 
-        createMessage(input: MessageInput): Message
-        deleteMessage(messageId: ID!): String
-        updateMessage(messageId: ID!, input: MessageInput): Message
+        createComment(params: CommentInput): Comment
+        deleteComment(id: ID!): String
+        Comment(id: ID!, params: CommentInput): Comment
+
+        sendMessage(params: MessageInput): Message
         
-        createPaper(input: PaperInput): Paper
-        deletePaper(paperId: ID!): String
-        updatePaper(paperId: ID!, input: PaperInput): Paper
+        createPaper(params: PaperInput): Paper
+        deletePaper(id: ID!): String
+        updatePaper(id: ID!, params: PaperInput): Paper
 
-        createScholar(input: ScholarInput): Scholar
-        deleteScholar(scholarId: ID): String
-        updateScholar(scholarId: ID, input: ScholarInput): Scholar
+        createScholar(params: ScholarInput): Scholar
+        deleteScholar(id: ID): String
+        updateScholar(id: ID, params: ScholarInput): Scholar
         
-        register(registerInput: RegisterInput): User
+        register(registerparams: RegisterInput): User
         login(email: String!, password: String!): User
         updateUserInfo(name: String, password: String, email: String,avatar: String, personalProfile: String, role: Boolean): User
     }
