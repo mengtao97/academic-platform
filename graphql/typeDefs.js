@@ -1,10 +1,8 @@
-const {gql} = require("apollo-server-express");
+const { gql } = require("apollo-server-express");
 
 module.exports = gql`
 
-    type Authentication {
-        id: ID!
-        createdAt: String
+    input AuthenticationInput {
         userId: ID
         managerId: ID
         scholarId: ID
@@ -12,7 +10,61 @@ module.exports = gql`
         content: String
     }
 
-    input AuthenticationInput {
+    input CollectionInput {
+        paperId: ID
+        userId: ID
+    }
+
+    input CommentInput {
+        userId: ID
+        paperId: ID
+        body: String
+    }
+
+    input MessageInput {
+        senderId: ID
+        receiverId: ID
+        content: String
+    }
+
+    input PaperInput {
+        title: String
+        authors: [String]
+        keywords: [String]
+        lang: String
+        nCititation: Int
+        pageEnd: Int
+        pageStart: Int
+        venue: String
+        year: Int
+        volume: Int
+        issue: Int
+        doi: String
+        abstract: String
+    }
+
+    input ScholarInput {
+        name: String
+        avatar: String
+        orgs: String
+        nPubs: Int
+        nCitations: Int
+        researchField: [String]
+        hIndex: Int
+        pubs: [ID]
+        tags: [String]
+    }
+
+    input RegisterInput {
+        name: String
+        password: String
+        confirmPassword: String
+        email: String
+    }
+
+    type Authentication {
+        id: ID!
+        createdAt: String
         userId: ID
         managerId: ID
         scholarId: ID
@@ -27,11 +79,6 @@ module.exports = gql`
         userId: ID
     }
 
-    input CollectionInput {
-        paperId: ID
-        userId: ID
-    }
-
     type Comment {
         id: ID!
         createdAt: String
@@ -40,12 +87,6 @@ module.exports = gql`
         body: String
     }
 
-    input CommentInput {
-        userId: ID
-        paperId: ID
-        body: String
-    }
-    
     type Message {
         id: ID!
         createdAt: String
@@ -54,80 +95,51 @@ module.exports = gql`
         content: String
     }
 
-    input MessageInput {
-        senderId: ID
-        receiverId: ID
-        content: String
+    type Author {
+        id: ID,
+        name: String
     }
     
     type Paper {
         id: ID!
         createdAt: String
         title: String
-        authors: [String]
+        authors: [Author]
         keywords: [String]
         lang: String
         nCititation: Int
-        pageEnd: Int
-        pageStart: Int
+        pageEnd: String
+        pageStart: String
         venue: String
         year: Int
-        volume: Int
-        issue: Int
-        doi: String
-        abstract: String
-    }
-
-    input PaperInput{
-        title: String
-        authors: [String]
-        keywords: [String]
-        lang: String
-        nCititation: Int
-        pageEnd: Int
-        pageStart: Int
-        venue: String
-        year: Int
-        volume: Int
-        issue: Int
+        volume: String
+        issue: String
         doi: String
         abstract: String
     }
 
     type Pub {
-        r: ID!
-        i: Int
+        i: ID!
+        r: Int
     }
 
-    input PubInput {
-        r: ID!
-        i: Int
+    type Tag {
+        t: String,
+        w: Int
     }
-    
+
     type Scholar {
         id: ID!
         createdAt: String
         name: String
         avatar: String
-        orgs: String
+        orgs: [String]
         nPubs: Int
         nCitations: Int
         researchField: [String]
         hIndex: Int
         pubs: [Pub]
-        tags: [String]
-    }
-
-    input ScholarInput {
-        name: String
-        avatar: String
-        orgs: String
-        nPubs: Int
-        nCitations: Int
-        researchField: [String]
-        hIndex: Int
-        pubs: [PubInput]
-        tags: [String]
+        tags: [Tag]
     }
 
     type User {
@@ -144,14 +156,9 @@ module.exports = gql`
         createdAt: String
     }
 
-    input RegisterInput {
-        name: String!
-        password: String!
-        confirmPassword: String!
-        email: String!
-    }
-
     type Query{
+        login(email: String!, password: String!): User
+       
         Authentications(authenticationId: ID): [Authentication]
         
         Collections(collectionId: ID, userId: ID, paperId: ID): [Collection]
@@ -162,10 +169,8 @@ module.exports = gql`
         messages(idA: ID, idB: ID): [Message]
         
         Papers(params: String): [Paper]
-        getPapers:[Paper]
-        getScholars: [Scholar]
-        getScholar(scholarId: ID): Scholar
-
+        filterPapers: [Paper]
+        Scholars(params: String): [Scholar]
     }
 
     type Mutation {
@@ -190,10 +195,10 @@ module.exports = gql`
 
         createScholar(params: ScholarInput): Scholar
         deleteScholar(id: ID): String
-        updateScholar(id: ID, params: ScholarInput): Scholar
+        Scholar(id: ID, params: ScholarInput): Scholar
         
-        register(registerparams: RegisterInput): User
-        login(email: String!, password: String!): User
+        register(params: RegisterInput): User
+        
         updateUserInfo(name: String, password: String, email: String,avatar: String, personalProfile: String, role: Boolean): User
     }
 `;

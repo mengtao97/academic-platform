@@ -1,19 +1,22 @@
-const {model, Schema} = require("mongoose");
+const { model, Schema } = require("mongoose");
 
 const scholarSchema = new Schema({
     name: String,
     avatar: String,
-    orgs: String,
+    orgs: [String],
     nPubs: Number,
     nCitations: Number,
     researchField: [String],
     hIndex: Number,
     pubs: [{
-        r: {type: Schema.Types.ObjectId, ref: 'Paper'},
-        i: Number,
+        r: Number,
+        i: { type: Schema.Types.ObjectId, ref: 'Paper' },
     }],
-    tags: [String],
+    tags: [{
+        t: String,
+        w: Number,
+    }],
     createdAt: String
 });
 
-module.exports = new model("Scholar", scholarSchema);
+module.exports = new model("scholar", scholarSchema);

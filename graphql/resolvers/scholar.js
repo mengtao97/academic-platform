@@ -4,17 +4,23 @@ const {
 
 const Scholar = require("../../models/Scholar");
 
-const removeEmpty = obj => {
-    Object.keys(obj).forEach(key => obj[key] == null && delete obj[key]);
-};
-
 module.exports = {
     Query: {
-        getScholars: async () => await Scholar.find(),
-        getScholar: async (_, {scholarId}) => await Scholar.findById(scholarId)
+        Scholars: async (_, { params }) => {
+            const keywords = params.trim().split(' ').filter(el => el.length > 0);
+            const regex = new RegExp(keywords.join("|"));
+            const scholars = await Scholar.find({
+                $or: [
+                    { name: { $regex: regex, $options: "i" } },
+                    { "tags.t": { $regex: regex, $options: "i" } },
+                    { orgs: { $in: keywords } }
+                ]
+            });
+            return scholars;
+        },
     },
     Mutation: {
-        createScholar: async (_, {input}) => {
+        createScholar: async (_, { input }) => {
             const newScholar = new Scholar({
                 ...input,
                 pubs: [],
@@ -22,12 +28,12 @@ module.exports = {
             })
             return await newScholar.save();
         },
-        deleteScholar: async (_, {scholarId}) => {
+        deleteScholar: async (_, { scholarId }) => {
             const scholar = await Scholar.findById(scholarId);
             await scholar.delete();
             return "Scholar deleted successfully";
         },
-        updateScholar: async (_, {scholarId, input}) => {
+        Scholar: async (_, { scholarId, input }) => {
             const scholar = await Scholar.findById(scholarId);
             Object.assign(scholar, input);
             return await scholar.save();

@@ -14,6 +14,7 @@ module.exports = {
         ...messageResolvers.Query,
         ...paperResolvers.Query,
         ...scholarResolvers.Query,
+        ...userResolvers.Query,
     },
     Mutation: {
         ...authenticationResolvers.Mutation,

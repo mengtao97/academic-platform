@@ -9,14 +9,14 @@ module.exports = {
                 $or: [
                     { title: { $regex: regex, $options: "i" } },
                     { venue: { $regex: regex, $options: "i" } },
-                    { authors: { $in: keywords } },
+                    { "authors.name": { $in: keywords } },
                     { keywords: { $in: keywords } }
                 ]
             });
             return papers;
         },
         // TODO 精确查找
-        getPapers: async () => await Paper.find(),
+        filterPapers: async () => {return null},
     },
     Mutation: {
         async createPaper(_, { params }) {
