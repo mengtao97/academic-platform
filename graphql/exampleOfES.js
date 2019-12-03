@@ -15,6 +15,7 @@ function promisify(fn) {
 
 const promisifiedUserSearch = await promisify(User.search);
 
+
 module.exports = {
     Query: {
         async getUsers() {

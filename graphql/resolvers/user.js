@@ -62,13 +62,12 @@ module.exports = {
         async register(
             _, { params }
         ) {
-            const { name, email, password, confirmPassword } = params;
+            const { name, email, password } = params;
             // Validate user data
             const { valid, errors } = validateRegisterInput(
                 name,
                 email,
                 password,
-                confirmPassword
             );
             if (!valid) {
                 throw new UserInputError('Errors', { errors });
@@ -88,7 +87,8 @@ module.exports = {
                 email,
                 name,
                 password: hashedPassword,
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                role:false
             });
 
             const res = await newUser.save();

@@ -58,7 +58,6 @@ module.exports = gql`
     input RegisterInput {
         name: String
         password: String
-        confirmPassword: String
         email: String
     }
 
@@ -169,7 +168,8 @@ module.exports = gql`
         messages(idA: ID, idB: ID): [Message]
         
         Papers(params: String): [Paper]
-        filterPapers: [Paper]
+        searchPapersByScholarId(scholarId:ID):[Paper]
+        filterPapers(title:String,venue:String,author:String,keyword:String): [Paper]
         Scholars(params: String): [Scholar]
     }
 
