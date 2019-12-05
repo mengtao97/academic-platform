@@ -3,7 +3,7 @@ const Scholar = require('../../models/Scholar')
 
 module.exports = {
     Query: {
-        Papers: async (_, { params }) => {
+        Papers: async (_, { params, offset, limit }) => {
             const keywords = params.trim().split(' ').filter(el => el.length > 0);
             const regex = new RegExp(keywords.join("|"));
             const papers = await Paper.find({
@@ -13,7 +13,7 @@ module.exports = {
                     { "authors.name": { $in: keywords } },
                     { keywords: { $in: keywords } }
                 ]
-            });
+            }).skip(offset).limit(limit);
             return papers;
         },
         searchPapersByScholarId: async (_, { scholarId }) => {

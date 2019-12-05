@@ -167,7 +167,7 @@ module.exports = gql`
         recentContacts: [User]
         messages(idA: ID, idB: ID): [Message]
         
-        Papers(params: String): [Paper]
+        Papers(params: String, offset: Int = 0, limit: Int = 50): [Paper]
         searchPapersByScholarId(scholarId:ID):[Paper]
         filterPapers(title:String,venue:String,author:String,keyword:String): [Paper]
         Scholars(params: String): [Scholar]
