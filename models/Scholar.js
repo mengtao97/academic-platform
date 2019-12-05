@@ -16,7 +16,8 @@ const scholarSchema = new Schema({
         t: String,
         w: Number,
     }],
-    createdAt: String
+    createdAt: String,
+    userId: {type: Schema.Types.ObjectId, ref: 'User'} // uploader
 });
 
 module.exports = new model("scholar", scholarSchema);

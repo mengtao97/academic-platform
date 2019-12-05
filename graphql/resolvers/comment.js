@@ -1,3 +1,8 @@
+const {
+    AuthenticationError,
+    UserInputError
+} = require("apollo-server-express");
+
 const Comment = require('../../models/Comment');
 
 module.exports = {
@@ -15,19 +20,34 @@ module.exports = {
         }
     },
     Mutation: {
-        async createComment(_, {input}) {
-            const newComment = new Comment(input);
+        async createComment(_, {input}, context) {
+            const user = checkAuth(context);
+            const newComment = new Comment({
+                ...input,
+                userId: user.id,
+                createdAt: new Date().toISOString()
+            });
             return await newComment.save();
         },
-        async deleteComment (_, {commentId}) {
-            const comment = await Comment.findById(commentId);
-            await comment.delete();
-            return "Comment deleted successfully";
+        async deleteComment (_, {commentId}, context) {
+            const user = checkAuth(context);
+            if (user.username === post.username || user.username === 'admin') {
+                const comment = await Comment.findById(commentId);
+                await comment.delete();
+                return "Comment deleted successfully";
+            } else {
+                throw new AuthenticationError("Action not allowed");
+            }
         },
-        async Comment (_, {commentId, input}) {
-            const comment = await Comment.findById(commentId);
-            Object.assign(comment, input);
-            return await comment.save();
+        async updateComment (_, {commentId, input}, context) {
+            const user = checkAuth(context);
+            if (user.username === post.username || user.username === 'admin') {
+                const comment = await Comment.findById(commentId);
+                Object.assign(comment, input);
+                return await comment.save();
+            } else {
+                throw new AuthenticationError("Action not allowed");
+            }
         },
     }
 };

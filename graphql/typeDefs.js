@@ -3,7 +3,6 @@ const { gql } = require("apollo-server-express");
 module.exports = gql`
 
     input AuthenticationInput {
-        userId: ID
         managerId: ID
         scholarId: ID
         state: String
@@ -16,13 +15,11 @@ module.exports = gql`
     }
 
     input CommentInput {
-        userId: ID
         paperId: ID
         body: String
     }
 
     input MessageInput {
-        senderId: ID
         receiverId: ID
         content: String
     }
@@ -115,6 +112,7 @@ module.exports = gql`
         issue: String
         doi: String
         abstract: String
+        username: String
     }
 
     type Pub {
@@ -178,14 +176,14 @@ module.exports = gql`
         deleteAuthentication(authenticationId: ID!): String
 
         "创建一个学者主页申请。"
-        Authentication(authenticationId: ID!, params: AuthenticationInput): Authentication
+        updateAuthentication(authenticationId: ID!, params: AuthenticationInput): Authentication
 
         createCollection(params: CollectionInput): Collection
         deleteCollection(id: ID!): String
 
         createComment(params: CommentInput): Comment
         deleteComment(id: ID!): String
-        Comment(id: ID!, params: CommentInput): Comment
+        updateComment(id: ID!, params: CommentInput): Comment
 
         sendMessage(params: MessageInput): Message
         

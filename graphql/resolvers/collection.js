@@ -18,7 +18,7 @@ module.exports = {
         async createCollection(_, { params }) {
             const input = {
                 ...params,
-                createdAt: new Date().getTime().toString()
+                createdAt: new Date().toISOString()
             };
             const newCollection = new Collection(input);
             return await newCollection.save();

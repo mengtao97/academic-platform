@@ -1,5 +1,10 @@
+const {
+    AuthenticationError,
+    UserInputError
+} = require("apollo-server-express");
+
 const Paper = require('../../models/Paper');
-const Scholar = require('../../models/Scholar')
+const Scholar = require('../../models/Scholar');
 
 module.exports = {
     Query: {
@@ -40,19 +45,34 @@ module.exports = {
         },
     },
     Mutation: {
-        async createPaper(_, { params }) {
-            const newPaper = new Paper(params);
+        async createPaper(_, { params }, context) {
+            const user = checkAuth(context);
+            const newPaper = new Paper({
+                ...params,
+                userId: user.id,
+                createdAt: new Date().toISOString()
+            });
             return await newPaper.save();
         },
-        async deletePaper(_, { paperId }) {
-            const paper = await Paper.findById(paperId);
-            await paper.delete();
-            return "Paper deleted successfully";
+        async deletePaper(_, { paperId }, context) {
+            const user = checkAuth(context);
+            if (user.username === post.username || user.username === 'admin') {
+                const paper = await Paper.findById(paperId);
+                await paper.delete();
+                return "Paper deleted successfully";
+            } else {
+                throw new AuthenticationError("Action not allowed");
+            }
         },
-        async updatePaper(_, { paperId, input }) {
-            const paper = await Paper.findById(paperId);
-            Object.assign(paper, input);
-            return await paper.save();
+        async updatePaper(_, { paperId, input }, context) {
+            const user = checkAuth(context);
+            if (user.username === post.username || user.username === 'admin') {
+                const paper = await Paper.findById(paperId);
+                Object.assign(paper, input);
+                return await paper.save();
+            } else {
+                throw new AuthenticationError("Action not allowed");
+            }
         },
     }
 };

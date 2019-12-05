@@ -30,10 +30,12 @@ module.exports = {
         },
     },
     Mutation: {
-        async sendMessage(_, { params }) {
+        async sendMessage(_, { params }, context) {
+            const user = checkAuth(context);
             const input = {
                 ...params,
-                createdAt: new Date().getTime().toString()
+                senderId: user.id,
+                createdAt: new Date().toISOString()
             }
             const newMessage = new Message(input);
             return await newMessage.save();

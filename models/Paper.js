@@ -14,7 +14,8 @@ const paperSchema = new Schema({
     issue: String,
     doi: String,
     abstract: String,
-    createdAt: String
+    createdAt: String,
+    userId: {type: Schema.Types.ObjectId, ref: 'User'} // uploader
 });
 
 module.exports = new model("paper", paperSchema);
