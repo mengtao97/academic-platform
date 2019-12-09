@@ -4,7 +4,8 @@ const {
 } = require("apollo-server-express");
 
 const Scholar = require("../../models/Scholar");
-
+const checkAuth = require('../../util/check-auth')
+const User = require('../../models/User')
 module.exports = {
     Query: {
         Scholars: async (_, {params,page,perPage}) => {
@@ -56,31 +57,25 @@ module.exports = {
         },
         follow: async (_,{scholarId},context)=>{
             const currentId = checkAuth(context).id;
+            //console.log(currentId);
             const user = await User.findById(currentId);
             const scholar = await Scholar.findById(scholarId);
             if(!scholar)
                 throw new UserInputError('Can\'t find the Scholar');
             if(!user)
                 throw new AuthenticationError('Permission denied');
-            if(!user.schCollection.includes(scholarId)) 
-                user.schCollection.push(scholarId);
+            if(user.schCollection.find(item => item.scholarId === scholarId)) {
+                // Post already liked, unlike it
+                user.schCollection = user.schCollection.filter(item => item.scholarId !== scholarId);
+              } else {
+                // Not liked, like post
+                user.schCollection.push({
+                  scholarId,
+                  createdAt: new Date().toISOString()
+                });
+              }
             await user.save();
             return user;
-        },
-        unfollow:async (_,{scholarId},context)=>{
-            const currentId = checkAuth(context).id;
-            const user = await User.findById(currentId);
-            const scholar = await Scholar.findById(scholarId);
-            if(!scholar)
-                throw new UserInputError('Can\'t find the Scholar');
-            if(!user)
-                throw new AuthenticationError('Permission denied');
-            if(user.schCollection.includes(scholarId)){
-                user.schCollection.remove(scholarId);
-                await user.save();
-            }
-            return user;
-               
         },
         addTags:async (_,{params},context)=>{
             const {scholarId,tags } = params;

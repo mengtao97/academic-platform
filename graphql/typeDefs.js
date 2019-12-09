@@ -138,6 +138,16 @@ module.exports = gql`
         tags: [Tag]
     }
 
+    type Favorite {
+        paperId: ID
+        createdAt: String
+    }
+
+    type Follow {
+        scholarId: ID
+        createdAt: String
+    }
+
     type User {
         id:ID!
         email: String
@@ -146,8 +156,8 @@ module.exports = gql`
         password: String
         avatar: String
         personalProfile: String
-        paperCollection: [String]
-        schCollection: [String]
+        paperCollection: [Favorite]
+        schCollection: [Follow]
         role: Boolean
         createdAt: String
     }
@@ -192,7 +202,6 @@ module.exports = gql`
         deleteScholar(id: ID): String
         Scholar(id: ID, params: ScholarInput): Scholar
         follow(scholarId:ID):User
-        unfollow(scholarId:ID):User
         addTags(params:updateTagsInput):Scholar
         removeTags(params:updateTagsInput):Scholar
         updateBulletin(scholarId:ID,bulletin:String):Scholar
