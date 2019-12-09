@@ -102,9 +102,20 @@ module.exports = {
                 throw new UserInputError('Can\'t find the Scholar');
             if(!user)
                 throw new AuthenticationError('Permission denied');
-            const ss = new Set(scholar.tags);
             const st = new Set(tags);
             scholar.tags = scholar.tags.filter(x => !st.has(x));// minus
+            await scholar.save();
+            return scholar;
+        },
+        updateBulletin: async (_,{scholarId,bulletin},context)=>{
+            const currentId = checkAuth(context);
+            const user = User.findById(currentId);
+            const scholar = await Scholar.findById(scholarId);
+            if(!scholar)
+                throw new UserInputError('Can\'t find the Scholar');
+            if(!user)
+                throw new AuthenticationError('Permission denied');
+            scholar.bulletin = bulletin;
             await scholar.save();
             return scholar;
         }

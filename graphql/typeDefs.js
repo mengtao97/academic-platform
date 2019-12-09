@@ -53,6 +53,14 @@ module.exports = gql`
         email: String
     }
 
+    input updateTagsInput{
+        scholarId:ID
+        tags:[{
+            t: String,
+            w: Number,
+        }]
+    }
+
     type Authentication {
         id: ID!
         createdAt: String
@@ -151,10 +159,10 @@ module.exports = gql`
         recentContacts: [User]
         messages(idA: ID, idB: ID, page: Int, perPage: Int): [Message]
         
-        Papers(params: String, offset: Int = 0, limit: Int = 50): [Paper]
+        Papers(params: String, page:Int, perPage:Int): [Paper]
         searchPapersByScholarId(scholarId:ID):[Paper]
         filterPapers(title:String,venue:String,author:String,keyword:String): [Paper]
-        Scholars(params: String): [Scholar]
+        Scholars(params: String,page:Int, perPage:Int): [Scholar]
     }
 
     type Mutation {
@@ -177,6 +185,12 @@ module.exports = gql`
         createScholar(params: ScholarInput): Scholar
         deleteScholar(id: ID): String
         Scholar(id: ID, params: ScholarInput): Scholar
+        findScholarById(id:ID):Scholar
+        follow(scholarId:ID):User
+        unfollow(scholarId:ID):User
+        addTags(params:updateTagsInput):Scholar
+        removeTags(params:updateTagsInput):Scholar
+        updateBulletin(id:ID,bulletin:String):Scholar
         
         register(params: RegisterInput): User
         

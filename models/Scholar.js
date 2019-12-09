@@ -8,6 +8,7 @@ const scholarSchema = new Schema({
     nCitations: Number,
     researchField: [String],
     hIndex: Number,
+    bulletin:String,
     pubs: [{
         r: Number,
         i: { type: Schema.Types.ObjectId, ref: 'Paper' },
