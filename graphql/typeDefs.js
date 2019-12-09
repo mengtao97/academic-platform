@@ -164,6 +164,7 @@ module.exports = gql`
         searchPapersByScholarId(scholarId:ID):[Paper]
         filterPapers(title:String,venue:String,author:String,keyword:String): [Paper]
         Scholars(params: String,page:Int, perPage:Int): [Scholar]
+        findScholarById(scholarId:ID):Scholar
     }
 
     type Mutation {
@@ -186,12 +187,11 @@ module.exports = gql`
         createScholar(params: ScholarInput): Scholar
         deleteScholar(id: ID): String
         Scholar(id: ID, params: ScholarInput): Scholar
-        findScholarById(id:ID):Scholar
         follow(scholarId:ID):User
         unfollow(scholarId:ID):User
         addTags(params:updateTagsInput):Scholar
         removeTags(params:updateTagsInput):Scholar
-        updateBulletin(id:ID,bulletin:String):Scholar
+        updateBulletin(scholarId:ID,bulletin:String):Scholar
         
         register(params: RegisterInput): User
         

@@ -82,7 +82,8 @@ module.exports = {
             return user;
                
         },
-        addTags:async (_,{scholarId,tags},context)=>{
+        addTags:async (_,{params},context)=>{
+            const {scholarId,tags } = params;
             const currentId = checkAuth(context);
             const user = User.findById(currentId);
             const scholar = await Scholar.findById(scholarId);
@@ -94,7 +95,8 @@ module.exports = {
             await scholar.save();
             return scholar;
         },
-        removeTags: async (_,{scholarId,tags},context)=>{
+        removeTags: async (_,{params},context)=>{
+            const {scholarId,tags } = params;
             const currentId = checkAuth(context);
             const user = User.findById(currentId);
             const scholar = await Scholar.findById(scholarId);
