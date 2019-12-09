@@ -6,8 +6,14 @@ const userSchema = new Schema({
     email: String,
     avatar: String,
     personalProfile: String,
-    paperCollection: [String],
-    schCollection: [String],
+    paperCollection: [{
+        paperId: {type: Schema.Types.ObjectId, ref: 'Paper'},
+        createdAt: String
+    }],
+    schCollection: [{
+        scholarId: {type: Schema.Types.ObjectId, ref: 'Scholar'},
+        createdAt: String
+    }],
     role: Boolean,
     createdAt: String
 });

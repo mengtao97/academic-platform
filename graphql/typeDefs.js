@@ -9,11 +9,6 @@ module.exports = gql`
         content: String
     }
 
-    input CollectionInput {
-        paperId: ID
-        userId: ID
-    }
-
     input CommentInput {
         paperId: ID
         body: String
@@ -67,14 +62,7 @@ module.exports = gql`
         state: String
         content: String
     }
-
-    type Collection {
-        id: ID!
-        createdAt: String
-        paperId: ID
-        userId: ID
-    }
-
+    
     type Comment {
         id: ID!
         createdAt: String
@@ -158,8 +146,6 @@ module.exports = gql`
        
         Authentications(authenticationId: ID): [Authentication]
         
-        Collections(collectionId: ID, userId: ID, paperId: ID): [Collection]
-        
         Comments(commentId: ID, userId: ID, paperId: ID): [Comment]
         
         recentContacts: [User]
@@ -178,14 +164,11 @@ module.exports = gql`
         "创建一个学者主页申请。"
         updateAuthentication(authenticationId: ID!, params: AuthenticationInput): Authentication
 
-        createCollection(params: CollectionInput): Collection
-        deleteCollection(id: ID!): String
-
         createComment(params: CommentInput): Comment
         deleteComment(id: ID!): String
         updateComment(id: ID!, params: CommentInput): Comment
 
-        sendMessage(params: MessageInput): Message
+        sendAMessage(params: MessageInput): Message
         
         createPaper(params: PaperInput): Paper
         deletePaper(id: ID!): String

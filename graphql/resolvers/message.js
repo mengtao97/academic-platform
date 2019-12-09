@@ -31,10 +31,10 @@ module.exports = {
                     {$and: [{senderId: idB}, {receiverId: idA}]}
                 ]
             }).sort({createdAt: 1}).skip((page - 1) * perPage).limit(perPage);
-        },
+        }
     },
     Mutation: {
-        async sendMessage(_, {params}, context) {
+        async sendAMessage(_, {params}, context) {
             const user = checkAuth(context);
             const input = {
                 ...params,
