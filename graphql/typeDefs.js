@@ -144,6 +144,7 @@ module.exports = gql`
     type Query{
         login(email: String!, password: String!): User
         favorite: [Paper]
+        following: [Scholar]
        
         Authentications(authenticationId: ID): [Authentication]
         
