@@ -9,6 +9,7 @@ const {
 require('dotenv').config();
 const SECRET_KEY = process.env.SECRET_KEY;
 const User = require('../../models/User');
+const Paper = require('../../models/Paper');
 
 function generateToken(user) {
     return jwt.sign(
@@ -55,6 +56,15 @@ module.exports = {
                 id: user._id,
                 token
             };
+        },
+        async favorite(_, _, context) {
+            const user = checkAuth(context);
+            const results = [];
+            for (const each of user.paperCollection) {
+                const paper = Paper.findById(item.id);
+                results.push(paper);
+            }
+            return results;
         }
     },
     Mutation: {
