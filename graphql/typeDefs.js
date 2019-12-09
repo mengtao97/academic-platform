@@ -52,13 +52,16 @@ module.exports = gql`
         password: String
         email: String
     }
+    
+    input TagInput {
+        t: String
+        w: Int
+    }
+    
 
     input updateTagsInput{
         scholarId:ID
-        tags:[{
-            t: String,
-            w: Number,
-        }]
+        tags: [TagInput]
     }
 
     type Authentication {
