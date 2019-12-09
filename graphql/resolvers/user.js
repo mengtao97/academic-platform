@@ -57,7 +57,7 @@ module.exports = {
                 token
             };
         },
-        async favorite(_, _, context) {
+        async favorite(_, __, context) {
             const user = checkAuth(context);
             const results = [];
             for (const each of user.paperCollection) {
