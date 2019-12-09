@@ -163,7 +163,7 @@ module.exports = gql`
         Comments(commentId: ID, userId: ID, paperId: ID): [Comment]
         
         recentContacts: [User]
-        messages(idA: ID, idB: ID): [Message]
+        messages(idA: ID, idB: ID, page: Int, perPage: Int): [Message]
         
         Papers(params: String, offset: Int = 0, limit: Int = 50): [Paper]
         searchPapersByScholarId(scholarId:ID):[Paper]
