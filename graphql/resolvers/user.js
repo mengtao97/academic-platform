@@ -1,7 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { UserInputError } = require('apollo-server');
-const { AuthenticationError} = require('apollo-server');
 const checkAuth = require('../../util/check-auth')
 const {
     validateRegisterInput,
@@ -10,7 +9,7 @@ const {
 require('dotenv').config();
 const SECRET_KEY = process.env.SECRET_KEY;
 const User = require('../../models/User');
-const Scholar = require('../../models/Scholar');
+const Paper = require('../../models/Paper');
 
 function generateToken(user) {
     return jwt.sign(
@@ -57,6 +56,15 @@ module.exports = {
                 id: user._id,
                 token
             };
+        },
+        async favorite(_, __, context) {
+            const user = checkAuth(context);
+            const results = [];
+            for (const each of user.paperCollection) {
+                const paper = Paper.findById(item.id);
+                results.push(paper);
+            }
+            return results;
         }
     },
     Mutation: {
@@ -119,7 +127,7 @@ module.exports = {
             if (!_id)
                 _id = currentId;
             if (!isRoot && currentId != _id || !isRoot && role)
-                throw new AuthenticationError('Permission denied');
+                throw new UserInputError('Permission denied');
 
             const user = await User.findById(_id);
             const updateParameters = removeEmpty(arguments[1]);
@@ -131,8 +139,6 @@ module.exports = {
             }
             user.assign(updateParameters);
             return await user.save();
-        },
-        
+        }
     }
-    
 };
