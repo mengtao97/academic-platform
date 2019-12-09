@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { UserInputError } = require('apollo-server');
+const { AuthenticationError} = require('apollo-server');
 const checkAuth = require('../../util/check-auth')
 const {
     validateRegisterInput,
@@ -9,6 +10,7 @@ const {
 require('dotenv').config();
 const SECRET_KEY = process.env.SECRET_KEY;
 const User = require('../../models/User');
+const Scholar = require('../../models/Scholar');
 
 function generateToken(user) {
     return jwt.sign(
@@ -117,7 +119,7 @@ module.exports = {
             if (!_id)
                 _id = currentId;
             if (!isRoot && currentId != _id || !isRoot && role)
-                throw new UserInputError('Permission denied');
+                throw new AuthenticationError('Permission denied');
 
             const user = await User.findById(_id);
             const updateParameters = removeEmpty(arguments[1]);
@@ -129,6 +131,8 @@ module.exports = {
             }
             user.assign(updateParameters);
             return await user.save();
-        }
+        },
+        
     }
+    
 };

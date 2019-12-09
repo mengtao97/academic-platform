@@ -8,17 +8,17 @@ const Scholar = require('../../models/Scholar');
 
 module.exports = {
     Query: {
-        Papers: async (_, { params, offset, limit }) => {
+        Papers: async (_, { params, page, perPage }) => {
+            if(!page)
+                page = 1;
+            if(!perPage)
+                perPage = 20;
             const keywords = params.trim().split(' ').filter(el => el.length > 0);
             const regex = new RegExp(keywords.join("|"));
-            const papers = await Paper.find({
-                $or: [
-                    { title: { $regex: regex, $options: "i" } },
-                    { venue: { $regex: regex, $options: "i" } },
-                    { "authors.name": { $in: keywords } },
-                    { keywords: { $in: keywords } }
-                ]
-            }).skip(offset).limit(limit);
+            const papers = await Paper.find(
+                    { title: { $regex: regex, $options: "i" } }
+                    
+            ).skip((page-1)*perPage).limit(perPage);
             return papers;
         },
         searchPapersByScholarId: async (_, { scholarId }) => {
