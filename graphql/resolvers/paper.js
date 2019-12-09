@@ -6,6 +6,22 @@ const {
 const Paper = require('../../models/Paper');
 const Scholar = require('../../models/Scholar');
 
+var log4js = require('log4js');
+log4js.configure({
+    appenders: {
+      out: { type: 'stdout' },
+      app: { type: 'dateFile',
+             filename: 'log/paper/paper',
+             pattern: 'yyyy-MM-dd.log',
+             alwaysIncludePattern: true }
+    },
+    categories: {
+      default: { appenders: [ 'out', 'app' ], level: 'trace' }
+    }
+  });
+var logger = log4js.getLogger('PAPER');
+logger.level = 'trace';
+
 module.exports = {
     Query: {
         Papers: async (_, { params, offset, limit }) => {
@@ -19,6 +35,7 @@ module.exports = {
                     { keywords: { $in: keywords } }
                 ]
             }).skip(offset).limit(limit);
+            logger.trace("Query on paper with: \"" + keywords + "\" by: (need token).");
             return papers;
         },
         searchPapersByScholarId: async (_, { scholarId }) => {
@@ -32,6 +49,7 @@ module.exports = {
                 if (paper)
                     res.push(paper);
             };
+            logger.trace("Query on paper with ScholarID:" + scholarId + " by: (need token).");
             return res;
         },
         // TODO 精确查找
