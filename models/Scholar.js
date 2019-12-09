@@ -19,7 +19,10 @@ const scholarSchema = new Schema({
     }],
     createdAt: String,
     userId: {type: Schema.Types.ObjectId, ref: 'User'}, // uploader
-    coauthors: [{ type: Schema.Types.ObjectId, ref: 'Scholar' }]
+    coauthors: [{
+        scholarId: { type: Schema.Types.ObjectId, ref: 'Scholar' },
+        papers: [{ type: Schema.Types.ObjectId, ref: 'Paper' }]
+    }]
 });
 
 module.exports = new model("scholar", scholarSchema);
