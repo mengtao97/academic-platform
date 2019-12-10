@@ -124,6 +124,11 @@ module.exports = gql`
         t: String,
         w: Float
     }
+    
+    type CoAuthor {
+        scholarId: ID
+        papers: [Paper]
+    }
 
     type Scholar {
         id: ID!
@@ -139,6 +144,7 @@ module.exports = gql`
         tags: [Tag]
         userId:ID
         bulletin:String
+        coauthors: [CoAuthor]
     }
 
     type Favorite {
