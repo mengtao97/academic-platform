@@ -55,7 +55,7 @@ module.exports = gql`
     
     input TagInput {
         t: String
-        w: Int
+        w: Float
     }
     
 
@@ -120,8 +120,9 @@ module.exports = gql`
     }
 
     type Tag {
+        id:ID!
         t: String,
-        w: Int
+        w: Float
     }
 
     type Scholar {
@@ -136,6 +137,8 @@ module.exports = gql`
         hIndex: Int
         pubs: [Pub]
         tags: [Tag]
+        userId:ID
+        bulletin:String
     }
 
     type Favorite {
