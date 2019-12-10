@@ -166,10 +166,13 @@ module.exports = gql`
     }
 
     type Query{
+        "登录账号"
         login(email: String!, password: String!): User
-        favorite: [Paper]
+        "用于获取当前用户的所有收藏论文"
+        allFavorites: [Paper]
+        "用于获取当前用户的所有关注学者"
         following: [Scholar]
-       
+        
         Authentications(authenticationId: ID): [Authentication]
         
         Comments(commentId: ID, userId: ID, paperId: ID): [Comment]
@@ -182,6 +185,10 @@ module.exports = gql`
         filterPapers(title:String,venue:String,author:String,keyword:String): [Paper]
         Scholars(params: String,page:Int, perPage:Int): [Scholar]
         findScholarById(scholarId:ID):Scholar
+        "获取当前用户是否已经关注该学者"
+        isFollowing(scholarId:ID):Boolean
+        "获取当前用户是否已经收藏该论文"
+        isFavorite(paperId:ID):Boolean
     }
 
     type Mutation {
@@ -191,6 +198,7 @@ module.exports = gql`
         "创建一个学者主页申请。"
         updateAuthentication(authenticationId: ID!, params: AuthenticationInput): Authentication
 
+        
         createComment(params: CommentInput): Comment
         deleteComment(id: ID!): String
         updateComment(id: ID!, params: CommentInput): Comment
@@ -200,6 +208,7 @@ module.exports = gql`
         createPaper(params: PaperInput): Paper
         deletePaper(id: ID!): String
         updatePaper(id: ID!, params: PaperInput): Paper
+        favorite(paperId:ID):User
 
         createScholar(params: ScholarInput): Scholar
         deleteScholar(id: ID): String

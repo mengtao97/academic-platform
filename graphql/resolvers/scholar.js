@@ -22,6 +22,11 @@ module.exports = {
         findScholarById: async (_,{scholarId}) =>{
             const scholar = await Scholar.findById(scholarId);
             return scholar;
+        },
+        isFollowing: async (_,{scholarId},context) =>{
+            const currentId = checkAuth(context).id;
+            const user = await User.findById(currentId);
+            return !!user.schCollection.find(item => {return item.scholarId == scholarId});
         }
     },
     Mutation: {
@@ -59,11 +64,7 @@ module.exports = {
         follow: async (_,{scholarId},context)=>{
             const currentId = checkAuth(context).id;
             const user = await User.findById(currentId);
-            const scholar = await Scholar.findById(scholarId);
-            if(!scholar)
-                throw new UserInputError('Can\'t find the Scholar');
-            if(!user)
-                throw new AuthenticationError('Permission denied');
+            const scholar = await Scholar.findById(scholarId);//not need the value of scholar,but need to assure the scholar is exists
             if(user.schCollection.find(item => {return item.scholarId == scholarId})) {
                 user.schCollection = user.schCollection.filter(item => item.scholarId != scholarId);
             } else {

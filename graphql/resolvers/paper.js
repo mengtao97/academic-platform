@@ -5,7 +5,8 @@ const {
 
 const Paper = require('../../models/Paper');
 const Scholar = require('../../models/Scholar');
-
+const checkAuth = require('../../util/check-auth')
+const User = require('../../models/User')
 module.exports = {
     Query: {
         Papers: async (_, { params, page, perPage }) => {
@@ -43,6 +44,11 @@ module.exports = {
             });
             return papers;
         },
+        isFavorite: async (_,{paperId},context) =>{
+            const currentId = checkAuth(context).id;
+            const user = await User.findById(currentId);
+            return !!user.paperCollection.find(item => {return item.paperId == paperId});
+        }
     },
     Mutation: {
         async createPaper(_, { params }, context) {
@@ -74,5 +80,21 @@ module.exports = {
                 throw new AuthenticationError("Action not allowed");
             }
         },
+        favorite: async (_,{paperId},context)=>{
+            const currentId = checkAuth(context).id;
+            const user = await User.findById(currentId);
+            const paper = await Paper.findById(paperId);
+            if(user.paperCollection.find(item => {return item.paperId == paperId})) {
+                user.paperCollection = user.paperCollection.filter(item => item.paperId != paperId);
+            } else {
+                user.paperCollection.push({
+                  paperId,
+                  createdAt: new Date().toISOString()
+                });
+            }
+            await user.save();
+            return user;
+        }
+
     }
 };

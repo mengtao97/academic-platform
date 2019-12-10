@@ -58,21 +58,27 @@ module.exports = {
                 token
             };
         },
-        async favorite(_, __, context) {
-            const user = checkAuth(context);
+        async allFavorites(_, __, context) {
+            const currentId = checkAuth(context).id;
+            const user = await User.findById(currentId);
             const results = [];
-            for (const each of user.paperCollection) {
-                const paper = Paper.findById(each.id);
-                results.push(paper);
+            const collection = user.paperCollection;
+            collection.sort().reverse();
+            for (const each of collection) {
+                const { id, title } = await Paper.findById(each.paperId);
+                results.push({ id, title });
             }
             return results;
         },
         async following(_, __, context) {
-            const user = checkAuth(context);
+            const currentId = checkAuth(context).id;
+            const user = await User.findById(currentId);
             const results = [];
-            for (const each of user.schCollection) {
-                const scholar = Scholar.findById(each.id);
-                results.push(scholar);
+            const collection = user.schCollection;
+            collection.sort().reverse();
+            for (const each of collection) {
+                const { name, id, avatar } = await Scholar.findById(each.scholarId);
+                results.push({ name, id, avatar });
             }
             return results;
         }
@@ -108,7 +114,7 @@ module.exports = {
                 name,
                 password: hashedPassword,
                 createdAt: new Date().toISOString(),
-                role:false
+                role: false
             });
 
             const res = await newUser.save();
