@@ -41,7 +41,6 @@ module.exports = gql`
         orgs: String
         nPubs: Int
         nCitations: Int
-        researchField: [String]
         hIndex: Int
         pubs: [ID]
         tags: [String]
@@ -138,7 +137,6 @@ module.exports = gql`
         orgs: [String]
         nPubs: Int
         nCitations: Int
-        researchField: [String]
         hIndex: Int
         pubs: [Pub]
         tags: [Tag]
@@ -183,6 +181,16 @@ module.exports = gql`
         isFollowing:Boolean
     }
 
+    type ScholarsAndPageNum{
+        scholars:[Scholar]
+        numOfPages:Float
+    }
+
+    type PapersAndPageNum{
+        papers:[Paper]
+        numOfPages:Float
+    }
+
     type Query{
         "登录账号"
         login(email: String!, password: String!): User
@@ -197,10 +205,10 @@ module.exports = gql`
         recentContacts: [User]
         messages(idA: ID, idB: ID, page: Int, perPage: Int): [Message]
         
-        Papers(params: String, page:Int, perPage:Int): [Paper]
+        Papers(params: String, page:Int, perPage:Int): PapersAndPageNum
         searchPapersByScholarId(scholarId:ID):[Paper]
         filterPapers(title:String,venue:String,author:String,keyword:String): [Paper]
-        Scholars(params: String,page:Int, perPage:Int): [Scholar]
+        Scholars(params: String,page:Int, perPage:Int): ScholarsAndPageNum
         findScholarById(scholarId:ID):ScholarAndFollowing
         "获取当前用户是否已经收藏该论文"
         isFavorite(paperId:ID):Boolean

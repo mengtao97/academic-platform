@@ -7,34 +7,36 @@ const User = require('../../models/User')
 var log4js = require('log4js');
 log4js.configure({
     appenders: {
-      out: { type: 'stdout' },
-      app: { type: 'dateFile',
-             filename: 'log/paper/paper',
-             pattern: 'yyyy-MM-dd.log',
-             alwaysIncludePattern: true }
+        out: { type: 'stdout' },
+        app: {
+            type: 'dateFile',
+            filename: 'log/paper/paper',
+            pattern: 'yyyy-MM-dd.log',
+            alwaysIncludePattern: true
+        }
     },
     categories: {
-      default: { appenders: [ 'out', 'app' ], level: 'trace' }
+        default: { appenders: ['out', 'app'], level: 'trace' }
     }
-  });
+});
 var logger = log4js.getLogger('PAPER');
 logger.level = 'trace';
 
 module.exports = {
     Query: {
         Papers: async (_, { params, page, perPage }) => {
-            if(!page)
+            if (!page)
                 page = 1;
-            if(!perPage)
+            if (!perPage)
                 perPage = 20;
             const keywords = params.trim().split(' ').filter(el => el.length > 0);
             const regex = new RegExp(keywords.join("|"));
-            const papers = await Paper.find(
-                    { title: { $regex: regex, $options: "i" } }
-                    
-            ).skip((page-1)*perPage).limit(perPage);
+            const query = await Paper.find({ title: { $regex: regex, $options: "i" }});
+            const numOfPages = Math.ceil(query.length / perPage);
+            console.log(Math.ceil(query.length / perPage))
+            const papers = await Paper.find({ title: { $regex: regex, $options: "i" }}).skip((page - 1) * perPage).limit(perPage);
             logger.trace("Query on paper with: \"" + keywords + "\" by: (need token).");
-            return papers;
+            return { papers, numOfPages };
         },
         searchPapersByScholarId: async (_, { scholarId }) => {
             const scholar = await Scholar.findById(scholarId);
@@ -59,8 +61,8 @@ module.exports = {
             });
             return papers;
         },
-        isFavorite: async (_,{paperId},context) =>{
-            
+        isFavorite: async (_, { paperId }, context) => {
+
         }
     },
     Mutation: {
@@ -93,16 +95,16 @@ module.exports = {
                 throw new ApolloError("权限不足，不允许进行该操作！");
             }
         },
-        favorite: async (_,{paperId},context)=>{
+        favorite: async (_, { paperId }, context) => {
             const currentId = checkAuth(context).id;
             const user = await User.findById(currentId);
             const paper = await Paper.findById(paperId);
-            if(user.paperCollection.find(item => {return item.paperId == paperId})) {
+            if (user.paperCollection.find(item => { return item.paperId == paperId })) {
                 user.paperCollection = user.paperCollection.filter(item => item.paperId != paperId);
             } else {
                 user.paperCollection.push({
-                  paperId,
-                  createdAt: new Date().toISOString()
+                    paperId,
+                    createdAt: new Date().toISOString()
                 });
             }
             await user.save();

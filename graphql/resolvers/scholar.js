@@ -30,9 +30,11 @@ module.exports = {
             //const keywords = params.trim().split(' ').filter(el => el.length > 0);
             //const regex = new RegExp(keywords.join("|"));
             const regex = new RegExp(params);
+            const query = await Scholar.find({name: {$regex: regex, $options: "i"}},);
+            const numOfPages = Math.ceil(query.length/perPage);
             const scholars = await Scholar.find({name: {$regex: regex, $options: "i"}},).skip((page-1)*perPage).limit(perPage);
             logger.trace("Query on scholar with: \"" + params + "\" by: (need token).");
-            return scholars;
+            return {scholars,numOfPages};
         },
         findScholarById: async (_,{scholarId},context) =>{
             const scholar = await Scholar.findById(scholarId);

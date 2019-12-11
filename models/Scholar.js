@@ -6,7 +6,6 @@ const scholarSchema = new Schema({
     orgs: [String],
     nPubs: Number,
     nCitations: Number,
-    researchField: [String],
     hIndex: Number,
     bulletin:String,
     pubs: [{
