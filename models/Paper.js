@@ -5,7 +5,7 @@ const paperSchema = new Schema({
     authors: [{ id: { type: Schema.Types.ObjectId, ref: 'Scholar' }, name: String }],
     keywords: [String],
     lang: String,
-    nCititation: Number,
+    nCitation: Number,
     pageEnd: String,
     pageStart: String,
     venue: String,
