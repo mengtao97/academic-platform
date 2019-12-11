@@ -1,7 +1,4 @@
-const {
-    AuthenticationError,
-    UserInputError
-} = require("apollo-server-express");
+const { ApolloError } = require("apollo-server-express");
 
 const Paper = require('../../models/Paper');
 const Scholar = require('../../models/Scholar');
@@ -85,7 +82,7 @@ module.exports = {
                 await paper.delete();
                 return "Paper deleted successfully";
             } else {
-                throw new AuthenticationError("Action not allowed");
+                throw new ApolloError("权限不足，不允许进行该操作！");
             }
         },
         async updatePaper(_, { paperId, input }, context) {
@@ -95,7 +92,7 @@ module.exports = {
                 Object.assign(paper, input);
                 return await paper.save();
             } else {
-                throw new AuthenticationError("Action not allowed");
+                throw new ApolloError("权限不足，不允许进行该操作！");
             }
         },
         favorite: async (_,{paperId},context)=>{

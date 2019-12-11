@@ -1,7 +1,4 @@
-const {
-    UserInputError,
-    ApolloError
-} = require("apollo-server-express");
+const { ApolloError } = require("apollo-server-express");
 
 const Scholar = require("../../models/Scholar");
 const checkAuth = require('../../util/check-auth')
@@ -66,7 +63,7 @@ module.exports = {
                 await scholar.delete();
                 return "Scholar deleted successfully";
             }else
-                throw new ApolloError("Action not allowed",401)
+                throw new ApolloError("权限不足，不允许进行该操作！")
         },
         Scholar: async (_, {scholarId, input}, context) => {
             const currentId = checkAuth(context).id;
@@ -76,7 +73,7 @@ module.exports = {
                 Object.assign(scholar, input);
                 return await scholar.save();
             } else {
-                throw new ApolloError("Action not allowed",401);
+                throw new ApolloError("权限不足，不允许进行该操作！");
             }
         },
         follow: async (_,{scholarId},context)=>{
@@ -108,7 +105,7 @@ module.exports = {
                 await scholar.save();
                 return scholar;
             }else
-                throw new AuthenticationError('Permission denied'); 
+                throw new ApolloError('权限不足，不允许进行该操作！'); 
             
         },
         removeTags: async (_,{params},context)=>{
@@ -124,7 +121,7 @@ module.exports = {
                 await scholar.save();
                 return scholar;
             }else
-                throw new AuthenticationError('Permission denied'); 
+                throw new ApolloError('权限不足，不允许进行该操作！'); 
         },
         updateBulletin: async (_,{scholarId,bulletin},context)=>{
             const currentId = checkAuth(context).id;
@@ -135,7 +132,7 @@ module.exports = {
                 await scholar.save();
                 return scholar;
             }else
-                throw new AuthenticationError('Permission denied'); 
+                throw new ApolloError('权限不足，不允许进行该操作！'); 
             
         }
     }

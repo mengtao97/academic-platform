@@ -1,7 +1,4 @@
-const {
-    AuthenticationError,
-    UserInputError
-} = require("apollo-server-express");
+const {ApolloError} = require("apollo-server-express");
 
 const Comment = require('../../models/Comment');
 
@@ -52,7 +49,7 @@ module.exports = {
                 await comment.delete();
                 return "Comment deleted successfully";
             } else {
-                throw new AuthenticationError("Action not allowed");
+                throw new ApolloError("权限不足，不允许进行该操作！");
             }
         },
         async updateComment (_, {commentId, input}, context) {
@@ -62,7 +59,7 @@ module.exports = {
                 Object.assign(comment, input);
                 return await comment.save();
             } else {
-                throw new AuthenticationError("Action not allowed");
+                throw new ApolloError("权限不足，不允许进行该操作！");
             }
         },
     }

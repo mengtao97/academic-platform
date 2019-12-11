@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { UserInputError } = require('apollo-server');
+const { ApolloError } = require('apollo-server');
 const checkAuth = require('../../util/check-auth')
 const {
     validateRegisterInput,
@@ -34,20 +34,20 @@ module.exports = {
             const { errors, valid } = validateLoginInput(email, password);
 
             if (!valid) {
-                throw new UserInputError('Errors', { errors });
+                throw new ApolloError('Errors', { errors });
             }
 
             const user = await User.findOne({ email });
 
             if (!user) {
                 errors.general = 'User not found';
-                throw new UserInputError('User not found', { errors });
+                throw new ApolloError('未找到该用户', { errors });
             }
 
             const match = await bcrypt.compare(password, user.password);
             if (!match) {
                 errors.general = 'Wrong crendetials';
-                throw new UserInputError('Wrong crendetials', { errors });
+                throw new ApolloError('认证错误，请确认密码输入正确', { errors });
             }
 
             const token = generateToken(user);
@@ -96,16 +96,12 @@ module.exports = {
                 password,
             );
             if (!valid) {
-                throw new UserInputError('Errors', { errors });
+                throw new ApolloError('Errors', { errors });
             }
             // TODO: Make sure user doesnt already exist
             const user = await User.findOne({ email });
             if (user) {
-                throw new UserInputError('Email is taken', {
-                    errors: {
-                        email: 'This email is taken'
-                    }
-                });
+                throw new ApolloError('邮箱已注册');
             }
             // hash password and create an auth token
             const hashedPassword = await bcrypt.hash(password, 12);
@@ -143,14 +139,14 @@ module.exports = {
             if (!_id)
                 _id = currentId;
             if (!isRoot && currentId != _id || !isRoot && role)
-                throw new UserInputError('Permission denied');
+                throw new ApolloError('权限不足，不允许进行该操作！');
 
             const user = await User.findById(_id);
             const updateParameters = removeEmpty(arguments[1]);
             if (updateParameters.email) {
-                const regEx = /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/;
+                const regEx =  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                 if (!email.match(regEx)) {
-                    throw new UserInputError('Email must be a valid email address');
+                    throw new ApolloError('请提供有效邮箱！');
                 }
             }
             user.assign(updateParameters);

@@ -1,8 +1,3 @@
-const {
-    AuthenticationError,
-    UserInputError
-} = require("apollo-server-express");
-
 const Authentication = require('../../models/Authentication');
 const { ApolloError } = require("apollo-server");
 
@@ -40,7 +35,7 @@ module.exports = {
                 Object.assign(authentication, input);
                 return await authentication.save();
             } else {
-                throw new AuthenticationError("Action not allowed");
+                throw new ApolloError("权限不足，不允许进行该操作！");
             }
         },
     }
