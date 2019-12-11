@@ -127,7 +127,7 @@ module.exports = gql`
     
     type CoAuthor {
         scholarId: ID
-        papers: [Paper]
+        papers: [ID]
     }
 
     type Scholar {
@@ -190,6 +190,7 @@ module.exports = gql`
         allFavorites: [Paper]
         "用于获取当前用户的所有关注学者"
         following: [Scholar]
+        currentUser: User
         
         Authentications(authenticationId: ID): [Authentication]
         
