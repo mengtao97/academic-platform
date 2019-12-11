@@ -32,7 +32,7 @@ module.exports = () => {
         if (paper.year)
             obj['year'] = paper.year;
         if (paper.n_citation)
-            obj['nCititation'] = paper.n_citation;
+            obj['nCitation'] = paper.n_citation;
         if (paper.abstract)
             obj['abstract'] = paper.abstract;
         if (paper.keywords)

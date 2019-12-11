@@ -24,7 +24,7 @@ module.exports = gql`
         authors: [String]
         keywords: [String]
         lang: String
-        nCititation: Int
+        nCitation: Int
         pageEnd: Int
         pageStart: Int
         venue: String
@@ -102,7 +102,7 @@ module.exports = gql`
         authors: [Author]
         keywords: [String]
         lang: String
-        nCititation: Int
+        nCitation: Int
         pageEnd: String
         pageStart: String
         venue: String
