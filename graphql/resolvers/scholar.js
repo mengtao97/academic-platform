@@ -34,15 +34,17 @@ module.exports = {
             logger.trace("Query on scholar with: \"" + keywords + "\" by: (need token).");
             return scholars;
         },
-        findScholarById: async (_,{scholarId}) =>{
+        findScholarById: async (_,{scholarId},context) =>{
             const scholar = await Scholar.findById(scholarId);
-            return scholar;
+            try{
+                const currentId = checkAuth(context).id;
+                const user = await User.findById(currentId);
+                isFollowing = !!user.schCollection.find(item => {return item.scholarId == scholarId});
+            }catch(el){
+                isFollowing = false;
+            }
+            return {scholar,isFollowing};
         },
-        isFollowing: async (_,{scholarId},context) =>{
-            const currentId = checkAuth(context).id;
-            const user = await User.findById(currentId);
-            return !!user.schCollection.find(item => {return item.scholarId == scholarId});
-        }
     },
     Mutation: {
         createScholar: async (_, {input}, context) => {

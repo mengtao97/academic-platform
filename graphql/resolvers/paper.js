@@ -60,9 +60,7 @@ module.exports = {
             return papers;
         },
         isFavorite: async (_,{paperId},context) =>{
-            const currentId = checkAuth(context).id;
-            const user = await User.findById(currentId);
-            return !!user.paperCollection.find(item => {return item.paperId == paperId});
+            
         }
     },
     Mutation: {

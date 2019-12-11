@@ -171,6 +171,18 @@ module.exports = gql`
         createdAt: String
     }
 
+    type UserInfo{
+        name:String
+        id:ID
+        avatar:String
+        email:String
+    }
+
+    type ScholarAndFollowing{
+        scholar:Scholar
+        isFollowing:Boolean
+    }
+
     type Query{
         "登录账号"
         login(email: String!, password: String!): User
@@ -190,11 +202,11 @@ module.exports = gql`
         searchPapersByScholarId(scholarId:ID):[Paper]
         filterPapers(title:String,venue:String,author:String,keyword:String): [Paper]
         Scholars(params: String,page:Int, perPage:Int): [Scholar]
-        findScholarById(scholarId:ID):Scholar
-        "获取当前用户是否已经关注该学者"
-        isFollowing(scholarId:ID):Boolean
+        findScholarById(scholarId:ID):ScholarAndFollowing
         "获取当前用户是否已经收藏该论文"
         isFavorite(paperId:ID):Boolean
+
+        currentUser:UserInfo
     }
 
     type Mutation {

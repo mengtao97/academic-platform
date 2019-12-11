@@ -81,6 +81,11 @@ module.exports = {
                 results.push({ name, id, avatar });
             }
             return results;
+        },
+        async currentUser(_,__,context){
+            const currentId = checkAuth(context).id;
+            const user = await User.findById(currentId);
+            return {name,id,avatar,email} = user;
         }
     },
     Mutation: {
