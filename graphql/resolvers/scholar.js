@@ -6,6 +6,23 @@ const {
 const Scholar = require("../../models/Scholar");
 const checkAuth = require('../../util/check-auth')
 const User = require('../../models/User')
+
+var log4js = require('log4js');
+log4js.configure({
+    appenders: {
+      out: { type: 'stdout' },
+      app: { type: 'dateFile',
+             filename: 'log/scholar/scholar',
+             pattern: 'yyyy-MM-dd.log',
+             alwaysIncludePattern: true }
+    },
+    categories: {
+      default: { appenders: ['out','app' ], level: 'trace' }
+    }
+  });
+var logger = log4js.getLogger('SCHOLAR');
+logger.level = 'trace';
+
 module.exports = {
     Query: {
         Scholars: async (_, {params,page,perPage}) => {
@@ -17,6 +34,7 @@ module.exports = {
             //const regex = new RegExp(keywords.join("|"));
             const regex = new RegExp(params);
             const scholars = await Scholar.find({name: {$regex: regex, $options: "i"}},).skip((page-1)*perPage).limit(perPage);
+            logger.trace("Query on scholar with: \"" + keywords + "\" by: (need token).");
             return scholars;
         },
         findScholarById: async (_,{scholarId}) =>{

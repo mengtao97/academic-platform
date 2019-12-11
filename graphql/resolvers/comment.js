@@ -5,6 +5,22 @@ const {
 
 const Comment = require('../../models/Comment');
 
+var log4js = require('log4js');
+log4js.configure({
+    appenders: {
+      out: { type: 'stdout' },
+      app: { type: 'dateFile',
+             filename: 'log/comment/comment',
+             pattern: 'yyyy-MM-dd.log',
+             alwaysIncludePattern: true }
+    },
+    categories: {
+      default: { appenders: [ 'out', 'app' ], level: 'trace' }
+    }
+  });
+var logger = log4js.getLogger('COMMENT');
+logger.level = 'trace';
+
 module.exports = {
     Query: {
         Comments: async (_, { id, userId, paperId }) => {
