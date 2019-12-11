@@ -127,7 +127,7 @@ module.exports = gql`
     
     type CoAuthor {
         scholarId: ID
-        papers: [Paper]
+        papers: [ID]
     }
 
     type Scholar {
