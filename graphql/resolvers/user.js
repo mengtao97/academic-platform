@@ -30,6 +30,22 @@ const removeEmpty = obj => {
 
 module.exports = {
     Query: {
+        Users: async (_, { params, page, perPage },context) => {
+            currentId = checkAuth(context).id;
+            user = await User.findById(currentId);
+            if(!user.role)
+                throw ApolloError("您没有权限调用该接口！")
+            if (!page)
+                page = 1;
+            if (!perPage)
+                perPage = 20;
+            const keywords = params.trim().split(' ').filter(el => el.length > 0);
+            const regex = new RegExp(keywords.join("|"));
+            const query = await User.find({ name: { $regex: regex, $options: "i" }});
+            const numOfPages = Math.ceil(query.length / perPage);
+            const users = await User.find({ name: { $regex: regex, $options: "i" }}).skip((page - 1) * perPage).limit(perPage);
+            return { users, numOfPages };
+        },
         async login(_, { email, password }) {
             const { errors, valid } = validateLoginInput(email, password);
 

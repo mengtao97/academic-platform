@@ -190,6 +190,11 @@ module.exports = gql`
         papers:[Paper]
         numOfPages:Int
     }
+    
+    type UsersAndPageNum{
+        users:[User]
+        numOfPages:Int
+    }
 
     type Contact{
         id:ID
@@ -209,7 +214,7 @@ module.exports = gql`
         
         recentContacts: [Contact]
         messages(idA: ID, idB: ID, page: Int, perPage: Int): [Message]
-        
+        Users(params: String, page:Int, perPage:Int): UsersAndPageNum
         Papers(params: String, page:Int, perPage:Int): PapersAndPageNum
         searchPapersByScholarId(scholarId:ID):[Paper]
         filterPapers(title:String,venue:String,author:String,keyword:String): [Paper]
