@@ -30,7 +30,7 @@ module.exports = {
         },
         async updateAuthentication(_, { authenticationId, input }, context) {
             const user = checkAuth(context);
-            if (user.username === post.username || user.username === 'admin') {
+            if (user.username == post.username || user.role == true ) {
                 const authentication = await Authentication.findById(authenticationId);
                 Object.assign(authentication, input);
                 return await authentication.save();

@@ -245,7 +245,7 @@ module.exports = gql`
         updateBulletin(scholarId:ID,bulletin:String):Scholar
         
         register(params: RegisterInput): User
-        
+        registerAdmin(params: RegisterInput): User
         updateUserInfo(name: String, password: String, email: String,avatar: String, personalProfile: String, role: Boolean): User
     }
 `;

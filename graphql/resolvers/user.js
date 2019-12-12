@@ -89,7 +89,44 @@ module.exports = {
         }
     },
     Mutation: {
+        async registerAdmin(
+            _, { params }
+        ) {
+            const { name, email, password } = params;
+            // Validate user data
+            const { valid, errors } = validateRegisterInput(
+                name,
+                email,
+                password,
+            );
+            if (!valid) {
+                throw new ApolloError('Errors', { errors });
+            }
+            // TODO: Make sure user doesnt already exist
+            const user = await User.findOne({ email });
+            if (user) {
+                throw new ApolloError('邮箱已注册');
+            }
+            // hash password and create an auth token
+            const hashedPassword = await bcrypt.hash(password, 12);
+            const newUser = new User({
+                email,
+                name,
+                password: hashedPassword,
+                createdAt: new Date().toISOString(),
+                role: true
+            });
 
+            const res = await newUser.save();
+
+            const token = generateToken(res);
+
+            return {
+                ...res._doc,
+                id: res._id,
+                token
+            };
+        },
         async register(
             _, { params }
         ) {
