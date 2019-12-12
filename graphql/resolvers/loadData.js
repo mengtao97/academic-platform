@@ -21,14 +21,16 @@ module.exports = {
                     if (!scholarTo)
                         failed.push(infos[key].to);
                     if (scholarFrom && scholarTo) {
-                        await scholarFrom.coauthors.unshift({
+                        scholarFrom.coauthors.unshift({
                             scholarId: infos[key].to,
                             papers: infos[key].papers
                         });
-                        await scholarTo.coauthors.unshift({
+                        await scholarFrom.save();
+                        scholarTo.coauthors.unshift({
                             scholarId: infos[key].from,
                             papers: infos[key].papers
                         });
+                        await scholarTo.save();
                     }
                 }
             }
