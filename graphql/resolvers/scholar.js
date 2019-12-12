@@ -109,7 +109,7 @@ module.exports = {
                 await scholar.save();
                 return scholar;
             }else
-                throw new ApolloError('权限不足，不允许进行该操作！'); 
+                throw new ApolloError('权限不足，不允许进行该操作！');
             
         },
         removeTags: async (_,{params},context)=>{
@@ -125,7 +125,7 @@ module.exports = {
                 await scholar.save();
                 return scholar;
             }else
-                throw new ApolloError('权限不足，不允许进行该操作！'); 
+                throw new ApolloError('权限不足，不允许进行该操作！');
         },
         updateBulletin: async (_,{scholarId,bulletin},context)=>{
             const currentId = checkAuth(context).id;
@@ -136,7 +136,7 @@ module.exports = {
                 await scholar.save();
                 return scholar;
             }else
-                throw new ApolloError('权限不足，不允许进行该操作！'); 
+                throw new ApolloError('权限不足，不允许进行该操作！');
             
         }
     }

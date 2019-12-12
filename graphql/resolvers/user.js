@@ -34,7 +34,7 @@ module.exports = {
             currentId = checkAuth(context).id;
             user = await User.findById(currentId);
             if(!user.role)
-                throw ApolloError("您没有权限调用该接口！")
+                throw new ApolloError("您没有权限调用该接口！")
             if (!page)
                 page = 1;
             if (!perPage)
