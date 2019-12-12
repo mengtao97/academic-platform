@@ -217,6 +217,7 @@ module.exports = gql`
     }
 
     type Mutation {
+        loadCoAuthors: String
         createAuthentication(params: AuthenticationInput): Authentication
         deleteAuthentication(authenticationId: ID!): String
 

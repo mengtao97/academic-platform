@@ -13,11 +13,11 @@ async function load() {
             const scholarFrom = await Scholar.findById(infos[key].from);
             const scholarTo= await Scholar.findById(infos[key].to);
             if (scholarFrom && scholarTo) {
-                scholarFrom.coauthors.unshift({
+                await scholarFrom.coauthors.unshift({
                     scholarId: infos[key].to,
                     papers: infos[key].papers
                 });
-                scholarTo.coauthors.unshift({
+                await scholarTo.coauthors.unshift({
                     scholarId: infos[key].from,
                     papers: infos[key].papers
                 });
@@ -26,7 +26,13 @@ async function load() {
     }
 }
 
-load();
+/*(async() => {
+    console.log('start')
+    await load()
+    console.log('finish')
+})()*/
+load().then(() => console.log("finish"))
+
 // infos.forEach(info => {
 //     console.log(papers)
 // })
