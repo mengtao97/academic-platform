@@ -191,6 +191,11 @@ module.exports = gql`
         numOfPages:Int
     }
 
+    type Contact{
+        id:ID
+        name:String
+        avatar:String
+    }
     type Query{
         "登录账号"
         login(email: String!, password: String!): User
@@ -202,7 +207,7 @@ module.exports = gql`
         
         Comments(commentId: ID, userId: ID, paperId: ID): [Comment]
         
-        recentContacts: [User]
+        recentContacts: [Contact]
         messages(idA: ID, idB: ID, page: Int, perPage: Int): [Message]
         
         Papers(params: String, page:Int, perPage:Int): PapersAndPageNum
