@@ -183,12 +183,12 @@ module.exports = gql`
 
     type ScholarsAndPageNum{
         scholars:[Scholar]
-        numOfPages:Float
+        numOfPages:Int
     }
 
     type PapersAndPageNum{
         papers:[Paper]
-        numOfPages:Float
+        numOfPages:Int
     }
 
     type Query{
