@@ -27,14 +27,15 @@ module.exports = {
                 return await Comment.find({ userId: { $eq: userId } });
             }
             if (!!paperId)
-                return await Comment.find({ paperId });
+                return await Comment.find({ paperId:{ $eq: paperId} });
             else
-                return Comment.find();
+                return null;
         }
     },
     Mutation: {
         async createComment(_, {input}, context) {
-            const user = checkAuth(context);
+            const currentId = checkAuth(context).id;
+            user = await User.findById(currentId); 
             const newComment = new Comment({
                 ...input,
                 userId: user.id,
@@ -43,8 +44,9 @@ module.exports = {
             return await newComment.save();
         },
         async deleteComment (_, {commentId}, context) {
-            const user = checkAuth(context);
-            if (user.username === post.username || user.username === 'admin') {
+            const currentId = checkAuth(context).id;
+            const user = await User.findById(currentId); 
+            if (user.username === post.username || user.role === true) {
                 const comment = await Comment.findById(commentId);
                 await comment.delete();
                 return "Comment deleted successfully";
@@ -53,8 +55,9 @@ module.exports = {
             }
         },
         async updateComment (_, {commentId, input}, context) {
-            const user = checkAuth(context);
-            if (user.username === post.username || user.username === 'admin') {
+            const currentId = checkAuth(context).id;
+            const user = await User.findById(currentId);
+            if (user.username === post.username || user.role === true) {
                 const comment = await Comment.findById(commentId);
                 Object.assign(comment, input);
                 return await comment.save();
