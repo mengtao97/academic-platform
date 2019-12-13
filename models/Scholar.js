@@ -1,4 +1,4 @@
-const { model, Schema } = require("mongoose");
+const {model, Schema} = require("mongoose");
 
 const scholarSchema = new Schema({
     name: String,
@@ -7,10 +7,10 @@ const scholarSchema = new Schema({
     nPubs: Number,
     nCitations: Number,
     hIndex: Number,
-    bulletin:String,
+    bulletin: String,
     pubs: [{
         r: Number,
-        i: { type: Schema.Types.ObjectId, ref: 'Paper' },
+        i: {type: Schema.Types.ObjectId, ref: 'Paper'},
     }],
     tags: [{
         t: String,
@@ -19,8 +19,8 @@ const scholarSchema = new Schema({
     createdAt: String,
     userId: {type: Schema.Types.ObjectId, ref: 'User'}, // uploader
     coauthors: [{
-        scholarId: { type: Schema.Types.ObjectId, ref: 'Scholar' },
-        papers: [{ type: Schema.Types.ObjectId, ref: 'Paper' }]
+        scholarId: {type: Schema.Types.ObjectId, ref: 'Scholar'},
+        papers: [{type: Schema.Types.ObjectId, ref: 'Paper'}]
     }]
 });
 

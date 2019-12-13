@@ -18,7 +18,7 @@ module.exports = {
                 results.push(contact);
                 addedContacts.add(contact.id);
             }
-            return {id,name,avatar} = results;
+            return {id, name, avatar} = results;
         },
         messages: async (_, {idA, idB, page, perPage}) => {
             if (!page)

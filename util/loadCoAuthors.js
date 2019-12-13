@@ -11,7 +11,7 @@ async function load() {
         if (infos.hasOwnProperty(key)) {
             console.log(infos[key].papers);
             const scholarFrom = await Scholar.findById(infos[key].from);
-            const scholarTo= await Scholar.findById(infos[key].to);
+            const scholarTo = await Scholar.findById(infos[key].to);
             if (scholarFrom && scholarTo) {
                 await scholarFrom.coauthors.unshift({
                     scholarId: infos[key].to,

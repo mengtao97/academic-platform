@@ -202,7 +202,7 @@ module.exports = gql`
         avatar:String
     }
     type PaperWithCommentsRelatedWorks {currentPaper: Paper, comments: [Comment], relatedWorks: [Paper]}
-    
+
     type Query{
         "登录账号"
         login(email: String!, password: String!): User

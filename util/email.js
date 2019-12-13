@@ -1,18 +1,18 @@
 const nodemailer = require('nodemailer')
 
 const config = {
-    host:'smtp.qq.com',
-    port:25,
+    host: 'smtp.qq.com',
+    port: 25,
     auth: {
         user: '962217260@qq.com',
         pass: 'hwwbuebetrozbbec'
-     }
+    }
 };
 
 const transporter = nodemailer.createTransport(config);
 
 module.exports = function (mail) {
-    transporter.sendMail(mail,function(error,info){
+    transporter.sendMail(mail, function (error, info) {
     });
 };
 

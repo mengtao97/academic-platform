@@ -1,8 +1,8 @@
-const { model, Schema } = require('mongoose');
+const {model, Schema} = require('mongoose');
 
 const paperSchema = new Schema({
     title: String,
-    authors: [{ id: { type: Schema.Types.ObjectId, ref: 'Scholar' }, name: String }],
+    authors: [{id: {type: Schema.Types.ObjectId, ref: 'Scholar'}, name: String}],
     keywords: [String],
     lang: String,
     nCitation: Number,
