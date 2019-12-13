@@ -35,12 +35,11 @@ module.exports = {
         }
     },
     Mutation: {
-        createComment: async (_, input, context)=> {
+        createComment: async (_, {params}, context)=> {
             const currentId = checkAuth(context).id;
             user = await User.findById(currentId); 
             const newComment = new Comment({
-                paperId:input.params.paperId,
-                body:input.params.body,
+                ...params,
                 userId: user.id,
                 createdAt: new Date().toISOString()
             });
