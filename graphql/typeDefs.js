@@ -1,4 +1,4 @@
-const { gql } = require("apollo-server-express");
+const {gql} = require("apollo-server-express");
 
 module.exports = gql`
 
@@ -51,12 +51,12 @@ module.exports = gql`
         password: String
         email: String
     }
-    
+
     input TagInput {
         t: String
         w: Float
     }
-    
+
 
     input updateTagsInput{
         scholarId:ID
@@ -72,7 +72,7 @@ module.exports = gql`
         state: String
         content: String
     }
-    
+
     type Comment {
         id: ID!
         createdAt: String
@@ -93,7 +93,7 @@ module.exports = gql`
         id: ID,
         name: String
     }
-    
+
     type Paper {
         id: ID!
         createdAt: String
@@ -123,7 +123,7 @@ module.exports = gql`
         t: String,
         w: Float
     }
-    
+
     type CoAuthor {
         scholarId: ID
         papers: [ID]
@@ -190,7 +190,7 @@ module.exports = gql`
         papers:[Paper]
         numOfPages:Int
     }
-    
+
     type UsersAndPageNum{
         users:[User]
         numOfPages:Int
@@ -201,23 +201,28 @@ module.exports = gql`
         name:String
         avatar:String
     }
+    type PaperWithCommentsRelatedWorks {currentPaper: Paper, comments: [Comment], relatedWorks: [Paper]}
+    
     type Query{
         "登录账号"
         login(email: String!, password: String!): User
+        Users(params: String, page:Int, perPage:Int): UsersAndPageNum
         "用于获取当前用户的所有收藏论文"
         allFavorites: [Paper]
         "用于获取当前用户的所有关注学者"
         following: [Scholar]
+
         Authentications(authenticationId: ID): [Authentication]
-        
         Comments(commentId: ID, userId: ID, paperId: ID): [Comment]
-        
         recentContacts: [Contact]
         messages(idA: ID, idB: ID, page: Int, perPage: Int): [Message]
-        Users(params: String, page:Int, perPage:Int): UsersAndPageNum
+
+
         Papers(params: String, page:Int, perPage:Int): PapersAndPageNum
         searchPapersByScholarId(scholarId:ID):[Paper]
+        getPaperById(paperId: ID): PaperWithCommentsRelatedWorks
         filterPapers(title:String,venue:String,author:String,keyword:String): [Paper]
+
         Scholars(params: String,page:Int, perPage:Int): ScholarsAndPageNum
         findScholarById(scholarId:ID):ScholarAndFollowing
         "获取当前用户是否已经收藏该论文"
@@ -234,13 +239,13 @@ module.exports = gql`
         "创建一个学者主页申请。"
         updateAuthentication(authenticationId: ID!, params: AuthenticationInput): Authentication
 
-        
+
         createComment(params: CommentInput): Comment
         deleteComment(commentId: ID!): String
         updateComment(commentId: ID!, params: CommentInput): Comment
 
         sendAMessage(params: MessageInput): Message
-        
+
         createPaper(params: PaperInput): Paper
         deletePaper(id: ID!): String
         updatePaper(id: ID!, params: PaperInput): Paper
@@ -253,7 +258,7 @@ module.exports = gql`
         addTags(params:updateTagsInput):Scholar
         removeTags(params:updateTagsInput):Scholar
         updateBulletin(scholarId:ID,bulletin:String):Scholar
-        
+
         register(params: RegisterInput): User
         registerAdmin(params: RegisterInput): User
         updateUserInfo(name: String, password: String, email: String,avatar: String, personalProfile: String, role: Boolean): User

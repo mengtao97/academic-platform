@@ -2,6 +2,7 @@ const { ApolloError } = require("apollo-server-express");
 
 const Paper = require('../../models/Paper');
 const Scholar = require('../../models/Scholar');
+const Comment = require('../../models/Comment');
 const checkAuth = require('../../util/check-auth')
 const User = require('../../models/User')
 var log4js = require('log4js');
@@ -63,6 +64,17 @@ module.exports = {
         },
         isFavorite: async (_, { paperId }, context) => {
 
+        },
+        getPaperById: async (_, { paperId }) => {
+            const paper = await Paper.findById(paperId);
+            if (paper) {
+                const comments = await Comment.find(item => item.paperId === paperId);
+                return {
+                    currentPaper: paper,
+                    comments: comments,
+                    relatedWorks: []
+                }
+            } else throw new Error("Paper not found.");
         }
     },
     Mutation: {
