@@ -1,6 +1,8 @@
 const {ApolloError} = require("apollo-server-express");
 
 const Comment = require('../../models/Comment');
+const checkAuth = require('../../util/check-auth')
+const User = require('../../models/User')
 
 var log4js = require('log4js');
 log4js.configure({
