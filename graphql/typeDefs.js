@@ -236,8 +236,8 @@ module.exports = gql`
 
         
         createComment(params: CommentInput): Comment
-        deleteComment(id: ID!): String
-        updateComment(id: ID!, params: CommentInput): Comment
+        deleteComment(commentId: ID!): String
+        updateComment(commentId: ID!, params: CommentInput): Comment
 
         sendAMessage(params: MessageInput): Message
         

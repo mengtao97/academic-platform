@@ -35,33 +35,34 @@ module.exports = {
         }
     },
     Mutation: {
-        async createComment(_, {input}, context) {
+        createComment: async (_, input, context)=> {
             const currentId = checkAuth(context).id;
             user = await User.findById(currentId); 
             const newComment = new Comment({
-                ...input,
+                paperId:input.params.paperId,
+                body:input.params.body,
                 userId: user.id,
                 createdAt: new Date().toISOString()
             });
             return await newComment.save();
         },
-        async deleteComment (_, {commentId}, context) {
+        deleteComment: async (_, {commentId}, context)=> {
             const currentId = checkAuth(context).id;
             const user = await User.findById(currentId); 
-            if (user.username === post.username || user.role === true) {
-                const comment = await Comment.findById(commentId);
+            const comment = await Comment.findById(commentId);
+            if (user.id === comment.userId || user.role === true) {
                 await comment.delete();
                 return "Comment deleted successfully";
             } else {
                 throw new ApolloError("权限不足，不允许进行该操作！");
             }
         },
-        async updateComment (_, {commentId, input}, context) {
+        updateComment: async (_, {commentId, params}, context)=>{
             const currentId = checkAuth(context).id;
             const user = await User.findById(currentId);
-            if (user.username === post.username || user.role === true) {
-                const comment = await Comment.findById(commentId);
-                Object.assign(comment, input);
+            const comment = await Comment.findById(commentId);
+            if (user.username === comment.username || user.role === true) {
+                Object.assign(comment, params);
                 return await comment.save();
             } else {
                 throw new ApolloError("权限不足，不允许进行该操作！");
