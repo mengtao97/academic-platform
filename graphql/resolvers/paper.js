@@ -75,6 +75,17 @@ module.exports = {
             const paper = await Paper.findById(paperId);
             if (paper) {
                 const comments = await Comment.find(item => item.paperId === paperId);
+                comments.map(item => {
+                    const user = User.findById(item.userId);
+                    return {
+                        ...item._doc,
+                        author: {
+                            id: user.id,
+                            name: user.name,
+                            avatar: user.avatar
+                        }
+                    }
+                });
                 return {
                     currentPaper: paper,
                     comments: comments,

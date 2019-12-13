@@ -74,6 +74,7 @@ module.exports = gql`
     }
 
     type Comment {
+        author: User
         id: ID!
         createdAt: String
         userId: ID
