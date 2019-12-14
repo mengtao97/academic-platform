@@ -75,16 +75,17 @@ module.exports = {
             const paper = await Paper.findById(paperId);
             if (paper) {
                 const comments = await Comment.find({paperId: paperId});
-                comments.map(item => {
+                const patchedComments = [];
+                for (const item of comments) {
                     const user = await User.findById(item.userId);
-                    return {
+                    patchedComments.push({
                         ...item._doc,
                         author: user
-                    }
-                });
+                    })
+                }
                 return {
                     currentPaper: paper,
-                    comments: comments,
+                    comments: patchedComments,
                     relatedWorks: []
                 }
             } else throw new Error("Paper not found.");
