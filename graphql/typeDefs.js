@@ -32,7 +32,8 @@ module.exports = gql`
         volume: Int
         issue: Int
         doi: String
-        abstract: String
+        abstract: String,
+        url:[String]
     }
 
     input ScholarInput {
@@ -112,6 +113,7 @@ module.exports = gql`
         doi: String
         abstract: String
         username: String
+        url:[String]
     }
 
     type Pub {
