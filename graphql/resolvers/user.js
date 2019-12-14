@@ -217,7 +217,7 @@ module.exports = {
         },
         deleteUserById: async (_, {userId}, context) => {
             const currentId = checkAuth(context).id;
-            const currentUser = await User.findById(currentId).role;
+            const currentUser = await User.findById(currentId);
             if (currentUser.role) {
                 const user = User.findById(userId);
                 if (user) {
