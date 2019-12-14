@@ -220,12 +220,10 @@ module.exports = {
             const currentUser = await User.findById(currentId);
             if (currentUser.role) {
                 const user = User.findById(userId);
-                if (user) {
-                    await User.deleteOne(user);
-                    return true;
-                } else
-                    throw new ApolloError('用户不存在！');
-            } throw new ApolloError('权限不足！');
+                await user.delete();
+                return true;
+            }
+            throw new ApolloError('权限不足！');
         }
     }
 };
