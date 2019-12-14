@@ -21,12 +21,15 @@ module.exports = {
             const newAuthentication = new Authentication(input);
             return await newAuthentication.save();
         },
-        async deleteAuthentication(_, {authenticationId}, context) {
-            const user = checkAuth(context);
-            // const authentication = await Authentication.findById(authenticationId);
-            // await authentication.delete();
-            // return "Authentication deleted successfully";
-            throw new ApolloError("Test", "UNDER_DEVELOPMENT", {a: "b"});
+        deleteAuthentication: async(_,{authenticationId},context) =>{
+            const currentId = checkAuth(context).id;
+            const isRoot = !!((await User.findById(currentId)).role);
+            const authentication = Authentication.findById(authenticationId);
+            if(isRoot && authentication){
+                await Authentication.deleteOne(authentication);
+                return true
+            }else
+                throw new ApolloError('权限不足或用户不存在！')
         },
         async updateAuthentication(_, {authenticationId, input}, context) {
             const user = checkAuth(context);

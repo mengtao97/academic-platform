@@ -214,6 +214,16 @@ module.exports = {
             }
             user.assign(updateParameters);
             return await user.save();
+        },
+        deleteUserById: async(_,{userId},context) =>{
+            const currentId = checkAuth(context).id;
+            const isRoot = !!((await User.findById(currentId)).role);
+            const user = User.findById(userId);
+            if(isRoot && user){
+                await User.deleteOne(user);
+                return true
+            }else
+                throw new ApolloError('权限不足或用户不存在！')
         }
     }
 };
