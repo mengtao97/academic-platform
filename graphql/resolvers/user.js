@@ -24,8 +24,14 @@ function generateToken(user) {
     );
 }
 
-const removeEmpty = obj => {
-    Object.keys(obj).forEach(key => obj[key] == null && delete obj[key]);
+function removeEmpty(obj){
+    let newObj = {};
+    for(const key in obj){
+        if(obj[key] != null){
+            newObj[key] = obj[key];
+        }
+    }
+    return obj;
 };
 
 module.exports = {
@@ -206,13 +212,14 @@ module.exports = {
 
             const user = await User.findById(_id);
             const updateParameters = removeEmpty(arguments[1]);
-            if (updateParameters.email) {
+            console.log(arguments[1], updateParameters);
+            if (!!updateParameters.email) {
                 const regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                 if (!email.match(regEx)) {
                     throw new ApolloError('请提供有效邮箱！');
                 }
             }
-            user.assign(updateParameters);
+            Object.assign(user,updateParameters);
             return await user.save();
         },
         deleteUserById: async(_,{userId},context) =>{

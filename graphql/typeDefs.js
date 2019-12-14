@@ -264,7 +264,7 @@ module.exports = gql`
 
         register(params: RegisterInput): User
         registerAdmin(params: RegisterInput): User
-        updateUserInfo(name: String, password: String, email: String,avatar: String, personalProfile: String, role: Boolean): User
+        updateUserInfo(_id:ID,name: String, password: String, email: String,avatar: String, personalProfile: String, role: Boolean): User
         deleteUserById(userId:ID):Boolean
     }
 `;
