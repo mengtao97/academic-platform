@@ -219,7 +219,7 @@ module.exports = {
             const currentId = checkAuth(context).id;
             const currentUser = await User.findById(currentId);
             if (currentUser.role) {
-                const user = User.findById(userId);
+                const user = await User.findById(userId);
                 await user.delete();
                 return true;
             }
