@@ -79,11 +79,7 @@ module.exports = {
                     const user = User.findById(item.userId);
                     return {
                         ...item._doc,
-                        author: {
-                            id: user.id,
-                            name: user.name,
-                            avatar: user.avatar
-                        }
+                        author: user
                     }
                 });
                 return {
