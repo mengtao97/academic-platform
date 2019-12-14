@@ -80,7 +80,11 @@ module.exports = {
                     const user = await User.findById(item.userId);
                     patchedComments.push({
                         ...item._doc,
-                        author: user
+                        author: {
+                            id: user.id,
+                            avatar: user.avatar,
+                            name: user.name
+                        }
                     })
                 }
                 return {
