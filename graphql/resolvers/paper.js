@@ -74,7 +74,7 @@ module.exports = {
         getPaperById: async (_, {paperId}) => {
             const paper = await Paper.findById(paperId);
             if (paper) {
-                // const comments = await Comment.find(item => item.paperId === paperId);
+                const comments = await Comment.find({paperId: paperId});
                 // comments.map(item => {
                 //     const user = User.findById(item.userId);
                 //     return {
@@ -88,7 +88,7 @@ module.exports = {
                 // });
                 return {
                     currentPaper: paper,
-                    comments: [],// comments,
+                    comments: comments,
                     relatedWorks: []
                 }
             } else throw new Error("Paper not found.");
