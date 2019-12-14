@@ -219,7 +219,7 @@ module.exports = {
             const currentId = checkAuth(context).id;
             const isRoot = !!((await User.findById(currentId)).role);
             const user = User.findById(userId);
-            if(isRoot && user){
+            if(isRoot && user && user.role === false){
                 await User.deleteOne(user);
                 return true
             }else
