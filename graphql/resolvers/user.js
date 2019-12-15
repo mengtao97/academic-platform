@@ -220,7 +220,8 @@ module.exports = {
                 }
             }
             Object.assign(user,updateParameters);
-            return await user.save();
+            await user.save();
+            return user;
         },
         deleteUserById: async (_, {userId}, context) => {
             const currentId = checkAuth(context).id;

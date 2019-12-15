@@ -19,6 +19,7 @@ const scholarSchema = new Schema({
     createdAt: String,
     userId: {type: Schema.Types.ObjectId, ref: 'User'}, // uploader
     coauthors: [{
+        
         scholarId: {type: Schema.Types.ObjectId, ref: 'Scholar'},
         papers: [{type: Schema.Types.ObjectId, ref: 'Paper'}]
     }]
