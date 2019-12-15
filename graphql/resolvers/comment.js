@@ -4,7 +4,7 @@ const Comment = require('../../models/Comment');
 const checkAuth = require('../../util/check-auth')
 const User = require('../../models/User')
 
-var log4js = require('log4js');
+/*var log4js = require('log4js');
 log4js.configure({
     appenders: {
         out: {type: 'stdout'},
@@ -20,7 +20,7 @@ log4js.configure({
     }
 });
 var logger = log4js.getLogger('COMMENT');
-logger.level = 'trace';
+logger.level = 'trace';*/
 
 module.exports = {
     Query: {
