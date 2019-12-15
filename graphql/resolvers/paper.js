@@ -105,26 +105,6 @@ module.exports = {
             });
             return await newPaper.save();
         },
-        async deletePaper(_, {paperId}, context) {
-            const user = checkAuth(context);
-            if (user.username === post.username || user.username === 'admin') {
-                const paper = await Paper.findById(paperId);
-                await paper.delete();
-                return "Paper deleted successfully";
-            } else {
-                throw new ApolloError("权限不足，不允许进行该操作！");
-            }
-        },
-        async updatePaper(_, {paperId, input}, context) {
-            const user = checkAuth(context);
-            if (user.username === post.username || user.username === 'admin') {
-                const paper = await Paper.findById(paperId);
-                Object.assign(paper, input);
-                return await paper.save();
-            } else {
-                throw new ApolloError("权限不足，不允许进行该操作！");
-            }
-        },
         favorite: async (_, {paperId}, context) => {
             const currentId = checkAuth(context).id;
             const user = await User.findById(currentId);

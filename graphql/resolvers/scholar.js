@@ -82,7 +82,7 @@ module.exports = {
             const currentId = checkAuth(context).id;
             const user = await User.findById(currentId);
             const scholar = await Scholar.findById(scholarId);
-            if (user.id === post.scholarId || user.role === true) {
+            if (user.id === scholar.userId || user.role === true) {
                 Object.assign(scholar, input);
                 return await scholar.save();
             } else {

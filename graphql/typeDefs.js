@@ -16,6 +16,7 @@ module.exports = gql`
 
     input MessageInput {
         receiverId: ID
+        type:String
         content: String
     }
 
@@ -88,6 +89,7 @@ module.exports = gql`
         createdAt: String
         senderId: ID
         receiverId: ID
+        type:String
         content: String
     }
 

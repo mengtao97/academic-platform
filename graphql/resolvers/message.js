@@ -1,7 +1,7 @@
 const Message = require('../../models/Message');
 const User = require('../../models/User');
 const checkAuth = require("../../util/check-auth");
-
+const {ApolloError} = require('apollo-server');
 module.exports = {
     Query: {
         recentContacts: async (_, __, context) => {
@@ -36,6 +36,9 @@ module.exports = {
     Mutation: {
         async sendAMessage(_, {params}, context) {
             const user = checkAuth(context);
+            const {type} = params;
+            if(type !== 'text' && type !== 'emoji')
+                throw new ApolloError("wrong message type!");
             const input = {
                 ...params,
                 senderId: user.id,

@@ -32,14 +32,7 @@ module.exports = {
                 throw new ApolloError('权限不足或用户不存在！')
         },
         async updateAuthentication(_, {authenticationId, input}, context) {
-            const user = checkAuth(context);
-            if (user.username == post.username || user.role == true) {
-                const authentication = await Authentication.findById(authenticationId);
-                Object.assign(authentication, input);
-                return await authentication.save();
-            } else {
-                throw new ApolloError("权限不足，不允许进行该操作！");
-            }
+            
         },
     }
 };
