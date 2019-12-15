@@ -1,30 +1,16 @@
-const {ApolloError} = require("apollo-server-express");
+const { ApolloError } = require("apollo-server-express");
 
 const Scholar = require("../../models/Scholar");
-const checkAuth = require('../../util/check-auth')
 const User = require('../../models/User')
 
+
 var log4js = require('log4js');
-log4js.configure({
-    appenders: {
-        out: {type: 'stdout'},
-        app: {
-            type: 'dateFile',
-            filename: 'log/scholar/scholar',
-            pattern: 'yyyy-MM-dd.log',
-            alwaysIncludePattern: true
-        }
-    },
-    categories: {
-        default: {appenders: ['out', 'app'], level: 'trace'}
-    }
-});
-var logger = log4js.getLogger('SCHOLAR');
-logger.level = 'trace';
+const checkAuth = require('../../util/check-auth')
+
 
 module.exports = {
     Query: {
-        Scholars: async (_, {params, page, perPage}) => {
+        Scholars: async (_, { params, page, perPage }, context) => {
             if (!page)
                 page = 1
             if (!perPage)
@@ -32,18 +18,41 @@ module.exports = {
             //const keywords = params.trim().split(' ').filter(el => el.length > 0);
             //const regex = new RegExp(keywords.join("|"));
             const regex = new RegExp(params);
-            const query = await Scholar.find({name: {$regex: regex, $options: "i"}},);
+            const query = await Scholar.find({ name: { $regex: regex, $options: "i" } });
             const numOfPages = Math.ceil(query.length / perPage);
             const scholars = await Scholar.find({
                 name: {
                     $regex: regex,
                     $options: "i"
                 }
-            },).skip((page - 1) * perPage).limit(perPage);
-            logger.trace("Query on scholar with: \"" + params + "\" by: (need token).");
-            return {scholars, numOfPages};
+            }).skip((page - 1) * perPage).limit(perPage);
+
+            var token = null;
+            if (context.req.headers.authorization != null) {
+                const val = checkAuth(context);
+                token = val.id;
+            }
+            log4js.configure({
+                appenders: {
+                    out: { type: 'stdout' },
+                    app: {
+                        type: 'dateFile',
+                        filename: "log/scholar/" + token,
+                        pattern: 'yyyy-MM.log',
+                        alwaysIncludePattern: true
+                    }
+                },
+                categories: {
+                    default: { appenders: ['out', 'app'], level: 'trace' }
+                }
+            });
+            var logger = log4js.getLogger('SCHOLAR');
+            logger.level = 'trace';
+            logger.trace("Query on scholar with: \"" + params + "\" by: " + token);
+            //}
+            return { scholars, numOfPages };
         },
-        findScholarById: async (_, {scholarId}, context) => {
+        findScholarById: async (_, { scholarId }, context) => {
             const scholar = await Scholar.findById(scholarId);
             try {
                 const currentId = checkAuth(context).id;
@@ -54,11 +63,11 @@ module.exports = {
             } catch (el) {
                 isFollowing = false;
             }
-            return {scholar, isFollowing};
+            return { scholar, isFollowing };
         },
     },
     Mutation: {
-        createScholar: async (_, {input}, context) => {
+        createScholar: async (_, { input }, context) => {
             const user = checkAuth(context);
             const newScholar = new Scholar({
                 ...input,
@@ -68,7 +77,7 @@ module.exports = {
             })
             return await newScholar.save();
         },
-        deleteScholar: async (_, {scholarId}, context) => {
+        deleteScholar: async (_, { scholarId }, context) => {
             const currentId = checkAuth(context).id;
             const user = await User.findById(currentId);
             const scholar = await Scholar.findById(scholarId);
@@ -78,7 +87,7 @@ module.exports = {
             } else
                 throw new ApolloError("权限不足，不允许进行该操作！")
         },
-        Scholar: async (_, {scholarId, input}, context) => {
+        Scholar: async (_, { scholarId, input }, context) => {
             const currentId = checkAuth(context).id;
             const user = await User.findById(currentId);
             const scholar = await Scholar.findById(scholarId);
@@ -89,7 +98,7 @@ module.exports = {
                 throw new ApolloError("权限不足，不允许进行该操作！");
             }
         },
-        follow: async (_, {scholarId}, context) => {
+        follow: async (_, { scholarId }, context) => {
             const currentId = checkAuth(context).id;
             const user = await User.findById(currentId);
             const scholar = await Scholar.findById(scholarId);//not need the value of scholar,but need to assure the scholar is exists
@@ -106,8 +115,8 @@ module.exports = {
             await user.save();
             return user;
         },
-        addTags: async (_, {params}, context) => {
-            const {scholarId, tags} = params;
+        addTags: async (_, { params }, context) => {
+            const { scholarId, tags } = params;
             const currentId = checkAuth(context).id;
             const user = User.findById(currentId);
             const scholar = await Scholar.findById(scholarId);
@@ -123,8 +132,8 @@ module.exports = {
                 throw new ApolloError('权限不足，不允许进行该操作！');
 
         },
-        removeTags: async (_, {params}, context) => {
-            const {scholarId, tags} = params;
+        removeTags: async (_, { params }, context) => {
+            const { scholarId, tags } = params;
             const currentId = checkAuth(context).id;
             const user = User.findById(currentId);
             const scholar = await Scholar.findById(scholarId);
@@ -138,7 +147,7 @@ module.exports = {
             } else
                 throw new ApolloError('权限不足，不允许进行该操作！');
         },
-        updateBulletin: async (_, {scholarId, bulletin}, context) => {
+        updateBulletin: async (_, { scholarId, bulletin }, context) => {
             const currentId = checkAuth(context).id;
             const user = User.findById(currentId);
             const scholar = await Scholar.findById(scholarId);
