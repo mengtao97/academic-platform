@@ -17,16 +17,12 @@ module.exports = {
         page = 1;
       if (!perPage)
         perPage = 20;
-
-      const keywords = params.trim().split(' ').filter(el => el.length > 0);
-      // const regex = new RegExp(keywords.join("|"));
-      // console.log(keywords)
       const { body } = await client.search({
         index: 'papers',
         // type: '_doc', // uncomment this line if you are using Elasticsearch ≤ 6
         body: {
           query: {
-            match: { title: params },
+            match: { title: params.toString() },
           }
         }
       })
