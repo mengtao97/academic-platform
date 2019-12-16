@@ -1,5 +1,6 @@
 const Authentication = require('../../models/Authentication');
 const {ApolloError} = require("apollo-server");
+const checkAuth = require('../../util/check-auth')
 
 module.exports = {
     Query: {
