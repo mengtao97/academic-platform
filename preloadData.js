@@ -16,13 +16,25 @@ db.on('open', async () => {
         await db.collection("paper").drop();
         console.log("Dropped `paper` collection.");
     } catch (err) {
-        console.error("Failed to drop Paper");
+        console.error("Failed to drop Paper, but it might not be a problem.");
     }
     try {
         await db.collection("scholar").drop();
         console.log("Dropped `scholars` collection.")
     } catch (err) {
-        console.error("Failed to drop Scholar");
+        console.error("Failed to drop Scholar, but it might not be a problem.");
+    }
+    try {
+        await db.collection("scholars").drop();
+        console.log("Dropped `scholars` collection.")
+    } catch (err) {
+        console.error("Failed to drop Scholars, but it might not be a problem.");
+    }
+    try {
+        await db.collection("papers").drop();
+        console.log("Dropped `papers` collection.")
+    } catch (err) {
+        console.error("Failed to drop Papers, but it might not be a problem.");
     }
     await ScholarSchema.insertMany(data[0]);
     console.log("All the scholars have been imported into the database.");

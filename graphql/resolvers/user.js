@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const {ApolloError} = require('apollo-server');
+const { ApolloError } = require('apollo-server');
 const checkAuth = require('../../util/check-auth')
 const {
     validateRegisterInput,
@@ -12,6 +12,9 @@ const User = require('../../models/User');
 const Paper = require('../../models/Paper');
 const Scholar = require('../../models/Scholar');
 
+const { Client } = require('@elastic/elasticsearch')
+const client = new Client({ node: 'http://localhost:9200' })
+
 function generateToken(user) {
     return jwt.sign(
         {
@@ -20,14 +23,15 @@ function generateToken(user) {
             name: user.name
         },
         SECRET_KEY,
-        {expiresIn: '24h'}
+        { expiresIn: '24h' }
     );
 }
 
-function removeEmpty(obj){
+
+function removeEmpty(obj) {
     let newObj = {};
-    for(const key in obj){
-        if(obj[key] != null){
+    for (const key in obj) {
+        if (obj[key] != null) {
             newObj[key] = obj[key];
         }
     }
@@ -36,7 +40,7 @@ function removeEmpty(obj){
 
 module.exports = {
     Query: {
-        Users: async (_, {params, page, perPage}, context) => {
+        Users: async (_, { params, page, perPage }, context) => {
             currentId = checkAuth(context).id;
             user = await User.findById(currentId);
             if (!user.role)
@@ -47,7 +51,7 @@ module.exports = {
                 perPage = 20;
             const keywords = params.trim().split(' ').filter(el => el.length > 0);
             const regex = new RegExp(keywords.join("|"));
-            const query = await User.find({name: {$regex: regex, $options: "i"}});
+            const query = await User.find({ name: { $regex: regex, $options: "i" } });
             const numOfPages = Math.ceil(query.length / perPage);
             const users = await User.find({
                 name: {
@@ -55,26 +59,26 @@ module.exports = {
                     $options: "i"
                 }
             }).skip((page - 1) * perPage).limit(perPage);
-            return {users, numOfPages};
+            return { users, numOfPages };
         },
-        async login(_, {email, password}) {
-            const {errors, valid} = validateLoginInput(email, password);
+        async login(_, { email, password }) {
+            const { errors, valid } = validateLoginInput(email, password);
 
             if (!valid) {
-                throw new ApolloError('Errors', {errors});
+                throw new ApolloError('Errors', { errors });
             }
 
-            const user = await User.findOne({email});
+            const user = await User.findOne({ email });
 
             if (!user) {
                 errors.general = 'User not found';
-                throw new ApolloError('未找到该用户', {errors});
+                throw new ApolloError('未找到该用户', { errors });
             }
 
             const match = await bcrypt.compare(password, user.password);
             if (!match) {
                 errors.general = 'Wrong crendetials';
-                throw new ApolloError('认证错误，请确认密码输入正确', {errors});
+                throw new ApolloError('认证错误，请确认密码输入正确', { errors });
             }
 
             const token = generateToken(user);
@@ -92,8 +96,8 @@ module.exports = {
             const collection = user.paperCollection;
             collection.sort().reverse();
             for (const each of collection) {
-                const {id, title} = await Paper.findById(each.paperId);
-                results.push({id, title});
+                const { id, title } = await Paper.findById(each.paperId);
+                results.push({ id, title });
             }
             return results;
         },
@@ -104,33 +108,53 @@ module.exports = {
             const collection = user.schCollection;
             collection.sort().reverse();
             for (const each of collection) {
-                const {name, id, avatar} = await Scholar.findById(each.scholarId);
-                results.push({name, id, avatar});
+                const { name, id, avatar } = await Scholar.findById(each.scholarId);
+                results.push({ name, id, avatar });
             }
             return results;
         },
         async currentUser(_, __, context) {
             const currentId = checkAuth(context).id;
             const user = await User.findById(currentId);
-            return {name, id, avatar, email} = user;
-        }
+            return { name, id, avatar, email } = user;
+        },
+        async getUsers() {
+
+            const { body } = await client.search({
+                index: 'users',
+                // type: '_doc', // uncomment this line if you are using Elasticsearch ≤ 6
+                body: {
+                    query: {
+                        match: { name: 'aa' }
+                    }
+                }
+            })
+            //console.log(body.hits.hits)
+            let ids = [];
+            await body.hits.hits.forEach(async function (result) {
+                ids.push(result._id);
+            })
+
+            records = await User.find().where('_id').in(ids).exec();
+            return records;
+        },
     },
     Mutation: {
         async registerAdmin(
-            _, {params}
+            _, { params }
         ) {
-            const {name, email, password} = params;
+            const { name, email, password } = params;
             // Validate user data
-            const {valid, errors} = validateRegisterInput(
+            const { valid, errors } = validateRegisterInput(
                 name,
                 email,
                 password,
             );
             if (!valid) {
-                throw new ApolloError('Errors', {errors});
+                throw new ApolloError('Errors', { errors });
             }
             // TODO: Make sure user doesnt already exist
-            const user = await User.findOne({email});
+            const user = await User.findOne({ email });
             if (user) {
                 throw new ApolloError('邮箱已注册');
             }
@@ -155,20 +179,20 @@ module.exports = {
             };
         },
         async register(
-            _, {params}
+            _, { params }
         ) {
-            const {name, email, password} = params;
+            const { name, email, password } = params;
             // Validate user data
-            const {valid, errors} = validateRegisterInput(
+            const { valid, errors } = validateRegisterInput(
                 name,
                 email,
                 password,
             );
             if (!valid) {
-                throw new ApolloError('Errors', {errors});
+                throw new ApolloError('Errors', { errors });
             }
             // TODO: Make sure user doesnt already exist
-            const user = await User.findOne({email});
+            const user = await User.findOne({ email });
             if (user) {
                 throw new ApolloError('邮箱已注册');
             }
@@ -192,6 +216,21 @@ module.exports = {
                 token
             };
         },
+        changePassword: async (_, { oldPassword, newPassword }, context) => {
+            const currentId = checkAuth(context).id;
+            const user = await User.findById(currentId);
+            const match = await bcrypt.compare(oldPassword, user.password)
+            if (!match) {
+                throw new ApolloError("wrong password!");
+            }
+            else {
+                const newHashedPassword = await bcrypt.hash(newPassword, 12);
+                user.password = newHashedPassword;
+                await user.save();
+                return user;
+            }
+        }
+        ,
         updateUserInfo: async function (_, {
             _id,
             name,
@@ -219,11 +258,11 @@ module.exports = {
                     throw new ApolloError('请提供有效邮箱！');
                 }
             }
-            Object.assign(user,updateParameters);
+            Object.assign(user, updateParameters);
             await user.save();
             return user;
         },
-        deleteUserById: async (_, {userId}, context) => {
+        deleteUserById: async (_, { userId }, context) => {
             const currentId = checkAuth(context).id;
             const currentUser = await User.findById(currentId);
             if (currentUser.role) {

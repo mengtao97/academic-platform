@@ -1,4 +1,4 @@
-const {gql} = require("apollo-server-express");
+const { gql } = require("apollo-server-express");
 
 module.exports = gql`
 
@@ -212,6 +212,7 @@ module.exports = gql`
         "登录账号"
         login(email: String!, password: String!): User
         Users(params: String, page:Int, perPage:Int): UsersAndPageNum
+        getUsers:[User]
         "用于获取当前用户的所有收藏论文"
         allFavorites: [Paper]
         "用于获取当前用户的所有关注学者"
@@ -268,5 +269,6 @@ module.exports = gql`
         registerAdmin(params: RegisterInput): User
         updateUserInfo(_id:ID,name: String, password: String, email: String,avatar: String, personalProfile: String, role: Boolean): User
         deleteUserById(userId:ID):Boolean
+        changePassword(oldPassword:String,newPassword:String):User
     }
 `;

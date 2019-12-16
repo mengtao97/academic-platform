@@ -1,7 +1,7 @@
 const {model, Schema} = require("mongoose");
-
+const mongoosastic = require('mongoosastic')
 const userSchema = new Schema({
-    name: String,
+    name: {type:String,es_indexed:true},
     password: String,
     email: String,
     avatar: String,
@@ -16,6 +16,6 @@ const userSchema = new Schema({
     }],
     role: Boolean,
     createdAt: String
-});
+}).plugin(mongoosastic,{hosts: ['localhost:9200']});
 
 module.exports = model('User', userSchema);

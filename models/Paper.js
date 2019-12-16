@@ -1,7 +1,7 @@
 const {model, Schema} = require('mongoose');
-
+const mongoosastic = require('mongoosastic')
 const paperSchema = new Schema({
-    title: String,
+    title: {type:String,es_indexed:true},
     authors: [{id: {type: Schema.Types.ObjectId, ref: 'Scholar'}, name: String}],
     keywords: [String],
     lang: String,
@@ -17,6 +17,6 @@ const paperSchema = new Schema({
     createdAt: String,
     url:[String],
     userId: {type: Schema.Types.ObjectId, ref: 'User'} // uploader
-});
+}).plugin(mongoosastic,{hosts: ['localhost:9200']});
 
 module.exports = new model("Paper", paperSchema);
