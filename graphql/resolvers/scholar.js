@@ -6,7 +6,8 @@ const User = require('../../models/User')
 
 var log4js = require('log4js');
 const checkAuth = require('../../util/check-auth')
-
+const { Client } = require('@elastic/elasticsearch')
+const client = new Client({ node: 'http://localhost:9200' })
 
 module.exports = {
     Query: {
@@ -15,17 +16,21 @@ module.exports = {
                 page = 1
             if (!perPage)
                 perPage = 20
-            //const keywords = params.trim().split(' ').filter(el => el.length > 0);
-            //const regex = new RegExp(keywords.join("|"));
-            const regex = new RegExp(params);
-            const query = await Scholar.find({ name: { $regex: regex, $options: "i" } });
-            const numOfPages = Math.ceil(query.length / perPage);
-            const scholars = await Scholar.find({
-                name: {
-                    $regex: regex,
-                    $options: "i"
+
+            const { body } = await client.search({
+                index: 'scholars',
+                // type: '_doc', // uncomment this line if you are using Elasticsearch ≤ 6
+                body: {
+                    query: {
+                        match: { name: params.toString() },
+                    }
                 }
-            }).skip((page - 1) * perPage).limit(perPage);
+            })
+            const slicedHits = body.hits.hits.slice((page - 1) * perPage, page * perPage);
+            const numOfPages = Math.ceil(body.hits.hits.length / perPage)
+            const ids = slicedHits.map(hit => hit._id)
+
+            scholars = await Scholar.find().where('_id').in(ids).exec();
 
             var token = null;
             if (context.req.headers.authorization != null) {
@@ -49,7 +54,6 @@ module.exports = {
             var logger = log4js.getLogger('SCHOLAR');
             logger.level = 'trace';
             logger.trace("Query on scholar with: \"" + params + "\" by: " + token);
-            //}
             return { scholars, numOfPages };
         },
         findScholarById: async (_, { scholarId }, context) => {
