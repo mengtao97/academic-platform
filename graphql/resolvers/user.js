@@ -96,8 +96,8 @@ module.exports = {
             const collection = user.paperCollection;
             collection.sort().reverse();
             for (const each of collection) {
-                const { id, title } = await Paper.findById(each.paperId);
-                results.push({ id, title });
+                const paper = await Paper.findById(each.paperId);
+                results.push(paper);
             }
             return results;
         },
@@ -108,8 +108,8 @@ module.exports = {
             const collection = user.schCollection;
             collection.sort().reverse();
             for (const each of collection) {
-                const { name, id, avatar } = await Scholar.findById(each.scholarId);
-                results.push({ name, id, avatar });
+                const scholar = await Scholar.findById(each.scholarId);
+                results.push(scholar);
             }
             return results;
         },
