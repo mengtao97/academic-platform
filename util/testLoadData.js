@@ -40,11 +40,7 @@ db.on('open', async () => {
             const toIds = Object.keys(infos[fromId]);
             for (var toId of toIds) {
                 const scholarFrom = await Scholar.findById(fromId);
-                if (!scholarFrom)
-                    failed.push(fromId);
                 const scholarTo = await Scholar.findById(toId);
-                if (!scholarTo)
-                    failed.push(toId);
                 if (scholarFrom && scholarTo) {
                     scholarFrom.coauthors.unshift({
                         scholarId: toId,
