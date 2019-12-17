@@ -56,7 +56,7 @@ module.exports = {
                         if (scholarFrom && scholarTo) {
                             scholarFrom.coauthors.unshift({
                                 scholarId: toId,
-                                papers: infos[key].papers
+                                papers: infos[fromId][toId] // infos[key].papers
                             });
                             await scholarFrom.save();
                             scholarTo.coauthors.unshift({
