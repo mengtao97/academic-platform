@@ -31,15 +31,15 @@ db.on('open', async () => {
     // }
 
     // loading...
-    for (let i = 10; i <= 10; ++i) {
+    for (let i = 0; i <= 10; ++i) {
         let path = "/home/ubuntu/data/coauthor_" + i + ".json"
         const content = fs.readFileSync(path, "utf8");
         const infos = JSON.parse(content);
         const fromIds = Object.keys(infos);
-        for (var fromId in fromIds) {
+        for (var fromId of fromIds) {
             // check if the property/key is defined in the object itself, not in parent
             const toIds = Object.keys(infos[fromId]);
-            for (var toId in toIds) {
+            for (var toId of toIds) {
                 const scholarFrom = await Scholar.findById(fromId);
                 if (!scholarFrom)
                     failed.push(fromId);
