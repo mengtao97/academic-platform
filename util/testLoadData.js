@@ -6,8 +6,7 @@
 
 const mongoose = require('mongoose');
 
-const PaperSchema = require('../models/Paper');
-const ScholarSchema = require('../models/Scholar');
+const Scholar = require('../models/Scholar');
 const fs = require("fs");
 
 mongoose.connect("mongodb://localhost:27017/scholarly", {useNewUrlParser: true, useUnifiedTopology: true});
