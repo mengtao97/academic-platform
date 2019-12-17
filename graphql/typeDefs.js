@@ -239,6 +239,7 @@ module.exports = gql`
 
     type Mutation {
         loadCoAuthors(path: String = "/Users/chencongyong/Downloads/coauthor_info_sample.json"): [ID]
+        loadExtractedCoAuthors(path: String = "/Users/chencongyong/Downloads/coauthor_info_sample.json"): [ID]
         createAuthentication(params: AuthenticationInput): Authentication
         deleteAuthentication(authenticationId: ID!): String
 
