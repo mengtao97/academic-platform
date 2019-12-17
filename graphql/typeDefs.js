@@ -241,7 +241,12 @@ module.exports = gql`
 
     type Mutation {
         loadCoAuthors(path: String = "/Users/chencongyong/Downloads/coauthor_info_sample.json"): [ID]
+<<<<<<< HEAD
         createAuthentication(scholarId:ID,content:String): Authentication
+=======
+        loadExtractedCoAuthors(path: String = "/Users/chencongyong/Downloads/coauthor_info_sample.json"): [ID]
+        createAuthentication(params: AuthenticationInput): Authentication
+>>>>>>> 2c56047accb77549b523a1c225088ac2ea4873b2
         deleteAuthentication(authenticationId: ID!): String
         verifyAuthentication(authenticationId:ID, code:String):Scholar
 
