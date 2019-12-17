@@ -69,7 +69,7 @@ module.exports = {
 
                 }
             }
-            return failed;
         }
+        return failed;
     }
 };
