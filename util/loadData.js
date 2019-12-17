@@ -47,7 +47,7 @@ module.exports = () => {
             obj['doi'] = paper.doi;
         if (paper.volume)
             obj['volume'] = paper.volume;
-        if(paper.url)
+        if (paper.url)
             obj['url'] = paper.url;
         return obj;
     });

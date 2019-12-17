@@ -1,10 +1,26 @@
+
 const Authentication = require('../../models/Authentication');
-const {ApolloError} = require("apollo-server");
+const { ApolloError } = require("apollo-server");
 const checkAuth = require('../../util/check-auth')
+const User = require('../../models/User')
+const Scholar = require('../../models/Scholar')
+
+const nodemailer = require('nodemailer')
+
+const config = {
+    host: 'smtp.qq.com',
+    port: 25,
+    auth: {
+        user: '962217260@qq.com',
+        pass: 'hwwbuebetrozbbec'
+    }
+};
+
+const transporter = nodemailer.createTransport(config);
 
 module.exports = {
     Query: {
-        Authentications: async (_, {authenticationId}) => {
+        Authentications: async (_, { authenticationId }) => {
             if (!!authenticationId)
                 return [await Authentication.findById(authenticationId)]
             else
@@ -12,28 +28,71 @@ module.exports = {
         }
     },
     Mutation: {
-        async createAuthentication(_, {params}, context) {
-            const user = checkAuth(context);
+        async createAuthentication(_, { scholarId, content }, context) {
+            const currentId = checkAuth(context).id;
+            const user = await User.findById(currentId);
+            if (!user)
+                throw new ApolloError("你必须登录才能申请！");
             const input = {
-                ...params,
+                scholarId: scholarId,
+                content: content,
+                state: "waiting",
                 userId: user.id,
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                isAlive: false
             };
             const newAuthentication = new Authentication(input);
-            return await newAuthentication.save();
+            await newAuthentication.save();
+            return newAuthentication;
         },
-        deleteAuthentication: async(_,{authenticationId},context) =>{
+        deleteAuthentication: async (_, { authenticationId }, context) => {
             const currentId = checkAuth(context).id;
             const isRoot = !!((await User.findById(currentId)).role);
             const authentication = Authentication.findById(authenticationId);
-            if(isRoot && authentication){
+            if (isRoot && authentication) {
                 await Authentication.deleteOne(authentication);
                 return true
-            }else
+            } else
                 throw new ApolloError('权限不足或用户不存在！')
         },
-        async updateAuthentication(_, {authenticationId, input}, context) {
-            
+        async updateAuthentication(_, { authenticationId, decision }, context) {
+            const currentId = checkAuth(context).id;
+            const isRoot = !!((await User.findById(currentId)).role);
+            const authentication = await Authentication.findById(authenticationId);
+            const user = await User.findById(authentication.userId);
+            if (isRoot && authentication) {
+                const code = parseInt(Math.random() * 9000 + 1000)
+                if (decision === true) {
+                    const email = {
+                        from: '962217260@qq.com',
+                        subject: '激活链接',
+                        to: user.email,
+                        text: "验证码:" + code
+                    };
+                    transporter.sendMail(email);
+                    authentication.code = code;
+                    authentication.isAlive = true;
+                    authentication.managerId = currentId;
+                    await authentication.save();
+                    return authentication;
+                }
+            } else
+                throw new ApolloError('权限不足或用户不存在！')
         },
+        verifyAuthentication: async (_, { authenticationId, code }) => {
+            const authentication = await Authentication.findById(authenticationId);
+            if (authentication.code === code && authentication.isAlive) {
+                const scholar = await Scholar.findById(authentication.scholarId);
+                if (scholar) {
+                    scholar.userId = authentication.userId;
+                    authentication.isAlive = false;
+                    await authentication.save();
+                    await scholar.save();
+                    return scholar;
+                } else
+                    throw new ApolloError("学者主页不存在！")
+            } else
+                throw new ApolloError('验证码错误！')
+        }
     }
-};
+}

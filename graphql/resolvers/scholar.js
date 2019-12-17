@@ -71,10 +71,10 @@ module.exports = {
         },
     },
     Mutation: {
-        createScholar: async (_, { input }, context) => {
+        createScholar: async (_, { params }, context) => {
             const user = checkAuth(context);
             const newScholar = new Scholar({
-                ...input,
+                ...params,
                 pubs: [],
                 userId: user.id,
                 createdAt: new Date().toISOString()
@@ -91,12 +91,12 @@ module.exports = {
             } else
                 throw new ApolloError("权限不足，不允许进行该操作！")
         },
-        Scholar: async (_, { scholarId, input }, context) => {
+        Scholar: async (_, { scholarId, params }, context) => {
             const currentId = checkAuth(context).id;
             const user = await User.findById(currentId);
             const scholar = await Scholar.findById(scholarId);
             if (user.id === scholar.userId || user.role === true) {
-                Object.assign(scholar, input);
+                Object.assign(scholar, params);
                 return await scholar.save();
             } else {
                 throw new ApolloError("权限不足，不允许进行该操作！");

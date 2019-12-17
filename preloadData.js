@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const PaperSchema = require('./models/Paper');
 const ScholarSchema = require('./models/Scholar');
 
-mongoose.connect("mongodb://localhost:27017/scholarly", {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect("mongodb://localhost:27017/scholarly", { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 db.on('open', async () => {
     console.log("Connection established.");

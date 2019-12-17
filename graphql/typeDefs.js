@@ -73,6 +73,8 @@ module.exports = gql`
         scholarId: ID
         state: String
         content: String
+        code: String
+        isAlive: Boolean
     }
 
     type Comment {
@@ -239,11 +241,12 @@ module.exports = gql`
 
     type Mutation {
         loadCoAuthors(path: String = "/Users/chencongyong/Downloads/coauthor_info_sample.json"): [ID]
-        createAuthentication(params: AuthenticationInput): Authentication
+        createAuthentication(scholarId:ID,content:String): Authentication
         deleteAuthentication(authenticationId: ID!): String
+        verifyAuthentication(authenticationId:ID, code:String):Scholar
 
         "创建一个学者主页申请。"
-        updateAuthentication(authenticationId: ID!, params: AuthenticationInput): Authentication
+        updateAuthentication(authenticationId: ID!,decision:Boolean): Authentication
 
 
         createComment(params: CommentInput): Comment
