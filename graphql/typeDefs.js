@@ -96,7 +96,8 @@ module.exports = gql`
     }
 
     type Author {
-        id: ID,
+        id: ID
+        active:Boolean
         name: String
     }
 

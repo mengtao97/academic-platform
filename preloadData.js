@@ -1,13 +1,110 @@
 // @ts-check
-const preloadData = require('./util/loadData');
 const mongoose = require('mongoose');
 
 const PaperSchema = require('./models/Paper');
 const ScholarSchema = require('./models/Scholar');
 
+const { chain } = require("stream-chain");
+const { parser } = require("stream-json");
+const { streamValues } = require('stream-json/streamers/StreamValues');
+const fs = require("fs");
+
 mongoose.connect("mongodb://localhost:27017/scholarly", { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 db.on('open', async () => {
+    const loadData = (filePath, mode) => {
+        if (mode === 'author') {
+            const pipeline = chain([
+                fs.createReadStream(filePath),
+                parser(),
+                streamValues(),
+                data => {
+                    const author = Object.values(data.value)[0];
+                    return {
+                        name: author.name,
+                        nPubs: author.n_pubs,
+                        _id: author.id,
+                        orgs: author.orgs,
+                        tags: author.tags,
+                        pubs: author.pubs,
+                        nCitations: author.n_citation,
+                        hIndex: author.h_index,
+                        avatar: "",
+                    };
+                }
+            ]);
+
+            pipeline.on('data', async data => {
+                const newScholar = new ScholarSchema(data);
+                await newScholar.save();
+            });
+            return new Promise((resolve, reject) => {
+                pipeline.on('end', () => {
+                    resolve();
+                });
+                pipeline.on('error', err => {
+                    reject(err);
+                });
+            });
+        } else {
+            const pipeline = chain([
+                fs.createReadStream(filePath),
+                parser(),
+                streamValues(),
+                data => {
+                    const paper = Object.values(data.value)[0];
+                    console.log(paper);
+                    const obj = {
+                        authors: paper.authors,
+                        _id: paper.id,
+                        title: paper.title,
+                    };
+                    if (paper.issue)
+                        obj['issue'] = paper.issue;
+                    if (paper.lang)
+                        obj['lang'] = paper.lang;
+                    if (paper.year)
+                        obj['year'] = paper.year;
+                    if (paper.n_citation)
+                        obj['nCitation'] = paper.n_citation;
+                    if (paper.abstract)
+                        obj['abstract'] = paper.abstract;
+                    if (paper.keywords)
+                        obj['keywords'] = paper.keywords;
+                    if (paper.venue)
+                        obj['venue'] = paper.venue.raw;
+                    if (paper.page_start)
+                        obj['pageEnde'] = paper.page_start;
+                    if (paper.page_end)
+                        obj['pageStart'] = paper.page_end;
+                    if (paper.doi)
+                        obj['doi'] = paper.doi;
+                    if (paper.volume)
+                        obj['volume'] = paper.volume;
+                    if (paper.url)
+                        obj['url'] = paper.url;
+                    if (paper.pdf) {
+                        obj['pdf'] = paper.pdf;
+                    }
+                    return obj;
+                }
+            ]);
+
+            pipeline.on('data', async data => {
+                const newPaper = new PaperSchema(data);
+                await newPaper.save();
+            });
+
+            return new Promise((resolve, reject) => {
+                pipeline.on('end', () => {
+                    resolve();
+                });
+                pipeline.on('error', err => {
+                    reject(err);
+                });
+            })
+        }
+    }
     console.log("Connection established.");
 
     // preparing...
@@ -26,24 +123,19 @@ db.on('open', async () => {
     }
 
     // loading...
-    for (let i = 10; i <= 10; ++i) {
-        let file_path = "/home/ubuntu/data/author_" + i + ".json"
-        let data = preloadData(file_path, 'author')
-        for (const item of data) {
-            const newScholar = new ScholarSchema(item);
-            await newScholar.save();
-        }
+    for (let i = 1; i <= 1; ++i) {
+        const filePath = `/home/ubuntu/data/author_${i}.json`;
+        await loadData(filePath, 'author');
+        console.log(`Loaded; ${filePath}`)
     }
     console.log("All the scholars have been imported into the database.");
 
     for (let i = 7; i < 8; ++i) {
-        let file_path = "/home/ubuntu/data/papers_" + i + ".json"
-        let data = preloadData(file_path, 'paper')
-        for (const item of data) {
-            const newPaper = new PaperSchema(item);
-            await newPaper.save();
-        }
+        const filePath = `/home/ubuntu/data/papers_${i}.json`
+        await loadData(filePath, 'paper')
+        console.log(`Loaded; ${filePath}`)
     }
     console.log("All the papers have been imported into the database.");
+
     db.close();
 });
