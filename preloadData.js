@@ -6,7 +6,7 @@ const ScholarSchema = require('./models/Scholar');
 
 const { chain } = require("stream-chain");
 const { parser } = require("stream-json");
-const { streamValues } = require('stream-json/streamers/StreamValues');
+const { streamObject } = require('stream-json/streamers/StreamObject');
 const fs = require("fs");
 
 mongoose.connect("mongodb://localhost:27017/scholarly", { useNewUrlParser: true, useUnifiedTopology: true });
@@ -17,9 +17,9 @@ db.on('open', async () => {
             const pipeline = chain([
                 fs.createReadStream(filePath),
                 parser(),
-                streamValues(),
+                streamObject(),
                 data => {
-                    const author = Object.values(data.value)[0];
+                    const author = data.value;
                     return {
                         name: author.name,
                         nPubs: author.n_pubs,
@@ -50,10 +50,9 @@ db.on('open', async () => {
             const pipeline = chain([
                 fs.createReadStream(filePath),
                 parser(),
-                streamValues(),
+                streamObject(),
                 data => {
-                    const paper = Object.values(data.value)[0];
-                    console.log(paper);
+                    const paper = data.value;
                     const obj = {
                         authors: paper.authors,
                         _id: paper.id,
@@ -90,13 +89,17 @@ db.on('open', async () => {
                 }
             ]);
 
+            let counter = 0;
+
             pipeline.on('data', async data => {
+                ++counter;
                 const newPaper = new PaperSchema(data);
                 await newPaper.save();
             });
 
             return new Promise((resolve, reject) => {
                 pipeline.on('end', () => {
+                    console.log(`LOADED ${counter} papers.`)
                     resolve();
                 });
                 pipeline.on('error', err => {
@@ -122,20 +125,22 @@ db.on('open', async () => {
         console.error("Failed to drop Scholars, but it might not be a problem.");
     }
 
+    for (let i = 0; i < 20; ++i) {
+        const filePath = `/home/ubuntu/data/papers_${i}.json`
+        await loadData(filePath, 'paper')
+        console.log(`Loaded; ${filePath}`)
+    }
+    console.log("All the papers have been imported into the database.");
+
     // loading...
-    for (let i = 1; i <= 1; ++i) {
+    for (let i = 0; i <= 10; ++i) {
         const filePath = `/home/ubuntu/data/author_${i}.json`;
         await loadData(filePath, 'author');
         console.log(`Loaded; ${filePath}`)
     }
     console.log("All the scholars have been imported into the database.");
 
-    for (let i = 7; i < 8; ++i) {
-        const filePath = `/home/ubuntu/data/papers_${i}.json`
-        await loadData(filePath, 'paper')
-        console.log(`Loaded; ${filePath}`)
-    }
-    console.log("All the papers have been imported into the database.");
+
 
     db.close();
 });
