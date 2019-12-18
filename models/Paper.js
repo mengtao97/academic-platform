@@ -16,7 +16,8 @@ const paperSchema = new Schema({
     abstract: String,
     createdAt: String,
     url: [String],
-    userId: { type: Schema.Types.ObjectId, ref: 'User' } // uploader
+    userId: { type: Schema.Types.ObjectId, ref: 'User' },// uploader
+    pdf: String
 }).plugin(mongoosastic, { hosts: ['localhost:9200'] });
 
 module.exports = new model("Paper", paperSchema);
