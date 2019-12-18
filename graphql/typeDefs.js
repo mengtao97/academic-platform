@@ -36,6 +36,7 @@ module.exports = gql`
         abstract: String
         url:[String]
         pdf:String
+        issn: String
     }
 
     input ScholarInput {
@@ -122,6 +123,7 @@ module.exports = gql`
         volume: String
         issue: String
         doi: String
+        issn: String
         abstract: String
         username: String
         url:[String]
