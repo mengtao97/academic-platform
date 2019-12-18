@@ -1,11 +1,11 @@
-export function GetRecommendedPaperFromUserID(
+module.exports = function GetRecommendedPaperFromUserID(
     user_ID, call_back
 ) {
     if (user_ID == null) {
         user_ID = 'null'
     }
 
-    const paper_history_path = '../log/paper/'
+    const paper_history_path = './log/paper/'
     const today = new Date()
     const year = today.getFullYear()
     const month = today.getMonth() + 1
@@ -13,27 +13,35 @@ export function GetRecommendedPaperFromUserID(
 
     var fs = require('fs');
     if (!fs.existsSync(file_path)) {
-        return [
+        call_back([
             ['big data', 1],
             ['cloud computing', 1],
-            ['co']
-        ]
+            ['computer science', 1]
+        ])
+        return
     }
-    var readline = require('readline');
+
+    readline = require('readline');
     var file_reader = fs.createReadStream(file_path);
     var line_reader = readline.createInterface({
         input: file_reader,
     });
 
-    var keyReg = new RegExp("ab+c");
-    var keywords = []
+    var keyReg = new RegExp("(?<=\").*(?=\")");
+    var keywords = {}
     line_reader.on('line', (line) => {
-        console.log(index, line);
-        var key = keyReg.exec(line)
-        console.log('key = ', key)
+        var key = keyReg.exec(line)[0]
+        if (!(key in keywords)) {
+            keywords[key] = 0
+        }
+        keywords[key] += 1
     });
 
     line_reader.on('close', () => {
-        return keywords
+        keywords = Object.keys(keywords).map((key) => {
+            return [key, keywords[key]]
+        })
+        keywords = keywords.sort((a, b) => b[1] - a[1]).slice(0, 5)
+        call_back(keywords)
     })
 }
