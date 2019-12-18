@@ -75,6 +75,7 @@ module.exports = (filePath, mode) => {
         ]);
 
         pipeline.on('data', data => transformedPapers.push(data));
+        console.log(transformedPapers);
         return transformedPapers;
     }
 
