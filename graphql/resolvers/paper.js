@@ -59,7 +59,7 @@ module.exports = {
     searchPapersByScholarId: async (_, { scholarId }) => {
       const scholar = await Scholar.findById(scholarId);
       if (!scholar)
-        return null;//need error : can't find the scholar
+        throw new ApolloError('未找到该学者！');
       const pubs = scholar.pubs;
       const res = [];
       for (let i = 0, len = pubs.length; i < len; i++) {
@@ -67,22 +67,9 @@ module.exports = {
         if (paper)
           res.push(paper);
       }
-      ;
-      //logger.trace("Query on paper with ScholarID:" + scholarId + " by: (need token).");
       return res;
     },
-    // TODO 精确查找
-    filterPapers: async (_, { title, vuenue, author, keyword }, ) => {
-      const papers = await Paper.find({
-        $where: function () {
-          return (this.title === "2011年欧洲器官移植年会肾移植研究热点荟萃")
-        }
-      });
-      return papers;
-    },
-    isFavorite: async (_, { paperId }, context) => {
 
-    },
     getPaperById: async (_, { paperId }) => {
       const paper = await Paper.findById(paperId);
       if (paper) {

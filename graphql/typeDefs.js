@@ -5,7 +5,7 @@ module.exports = gql`
     input AuthenticationInput {
         managerId: ID
         scholarId: ID
-        state: String
+        state: Int
         content: String
     }
 
@@ -63,6 +63,11 @@ module.exports = gql`
     input updateTagsInput{
         scholarId:ID
         tags: [TagInput]
+    }
+
+    input removeTagsInput{
+        scholarId:ID
+        tags:[String]
     }
 
     type Authentication {
@@ -241,8 +246,6 @@ module.exports = gql`
     }
 
     type Mutation {
-        loadCoAuthors(path: String = "/Users/chencongyong/Downloads/coauthor_info_sample.json"): [ID]
-        loadExtractedCoAuthors(path: String = "/Users/chencongyong/Downloads/coauthor_info_sample.json"): [ID]
         createAuthentication(params: AuthenticationInput): Authentication
         deleteAuthentication(authenticationId: ID!): String
         verifyAuthentication(authenticationId:ID, code:String):Scholar
@@ -267,7 +270,7 @@ module.exports = gql`
         Scholar(id: ID, params: ScholarInput): Scholar
         follow(scholarId:ID):User
         addTags(params:updateTagsInput):Scholar
-        removeTags(params:updateTagsInput):Scholar
+        removeTags(params:removeTagsInput):Scholar
         updateBulletin(scholarId:ID,bulletin:String):Scholar
 
         register(params: RegisterInput): User

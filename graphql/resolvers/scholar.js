@@ -139,12 +139,12 @@ module.exports = {
         removeTags: async (_, { params }, context) => {
             const { scholarId, tags } = params;
             const currentId = checkAuth(context).id;
-            const user = User.findById(currentId);
+            const user = await User.findById(currentId);
             const scholar = await Scholar.findById(scholarId);
             if (currentId == scholar.userId || user.role == true) {
                 for (tag of tags) {
                     //delete
-                    scholar.tags = scholar.tags.filter(item => item.t != tag.t)
+                    scholar.tags = scholar.tags.filter(item => item.t != tag)
                 }
                 await scholar.save();
                 return scholar;
