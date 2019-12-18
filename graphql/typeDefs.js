@@ -239,7 +239,7 @@ module.exports = gql`
         Papers(params: String, page:Int, perPage:Int): PapersAndPageNum
         searchPapersByScholarId(scholarId:ID):[Paper]
         getPaperById(paperId: ID): PaperWithCommentsRelatedWorks
-        filterPapers(title:String,venue:String,author:String,keyword:String): [Paper]
+        recommendation:[Paper]
 
         Scholars(params: String,page:Int, perPage:Int): ScholarsAndPageNum
         findScholarById(scholarId:ID):ScholarAndFollowing
@@ -268,6 +268,7 @@ module.exports = gql`
         deletePaper(id: ID!): String
         updatePaper(id: ID!, params: PaperInput): Paper
         favorite(paperId:ID):User
+        
 
         createScholar(params: ScholarInput): Scholar
         deleteScholar(id: ID): String

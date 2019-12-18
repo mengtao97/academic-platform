@@ -6,9 +6,24 @@ const Comment = require('../../models/Comment');
 const checkAuth = require('../../util/check-auth');
 const User = require('../../models/User');
 var log4js = require('log4js');
-
+const Recommendation = require('../../util/recommendation')
 const { Client } = require('@elastic/elasticsearch')
 const client = new Client({ node: 'http://localhost:9200' })
+
+function promisify(fn) {
+  const callback = (resolve, reject, err, result) => {
+    if (err)
+      reject(err);
+    else
+      resolve(result);
+  };
+  return (...args) => {
+    return new Promise((resolve, reject) => {
+      const boundedCallback = callback.bind(null, resolve, reject);
+      fn(...args, boundedCallback);
+    });
+  };
+}
 
 module.exports = {
   Query: {
@@ -69,7 +84,44 @@ module.exports = {
       }
       return res;
     },
-
+    recommendation: async (_, __, context) => {
+      let currentId;
+      try {
+        currentId = checkAuth(context).id;
+      } catch (err) {
+        currentId = null;
+      }
+      const recommend = promisify(Recommendation);
+      const recommendations = await recommend(currentId);
+      let paperId = []
+      let papers = [];
+      for (item of recommendations) {
+        const { body } = await client.search({
+          index: 'papers',
+          body: {
+            query: {
+              match: { title: item[0].toString() },
+            }
+          }
+        })
+        let ids = body.hits.hits.map(hit => hit._id);
+        for (let id of ids) {
+          if (!paperId.includes(id))
+            paperId.push(id);
+        }
+        //paperId.push(apply(paperId, body.hits.hits.map(hit => hit._id)));
+      }
+      if (paperId.length < 4) {
+        for (let i = 0; i < paperId.length; i++) {
+          papers.push(await Paper.findById(paperId[i]));
+        }
+      } else {
+        for (let i = 0; i < 4; i++) {
+          papers.push(await Paper.findById(paperId[Math.floor(Math.random() * (paperId.length + 1))]));
+        }
+      }
+      return papers;
+    },
     getPaperById: async (_, { paperId }) => {
       const paper = await Paper.findById(paperId);
       if (paper) {
