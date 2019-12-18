@@ -4,7 +4,7 @@ const authenticationSchema = new Schema({
     userId: { type: Schema.Types.ObjectId, ref: 'User' },
     managerId: { type: Schema.Types.ObjectId, ref: 'User' },
     scholarId: { type: Schema.Types.ObjectId, ref: 'User' },
-    state: String,
+    state: Number,
     content: String,
     createdAt: String,
     code: String,

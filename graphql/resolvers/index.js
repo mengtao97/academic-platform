@@ -4,7 +4,6 @@ const messageResolvers = require('./message');
 const paperResolvers = require('./paper');
 const scholarResolvers = require('./scholar');
 const userResolvers = require('./user');
-const loadDataResolvers = require('./loadData');
 
 module.exports = {
     Query: {
@@ -22,6 +21,5 @@ module.exports = {
         ...paperResolvers.Mutation,
         ...scholarResolvers.Mutation,
         ...userResolvers.Mutation,
-        ...loadDataResolvers.Mutation
     }
 }

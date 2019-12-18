@@ -36,7 +36,7 @@ module.exports = {
             const input = {
                 scholarId: scholarId,
                 content: content,
-                state: "waiting",
+                state: 0,
                 userId: user.id,
                 createdAt: new Date().toISOString(),
                 isAlive: false
@@ -72,7 +72,13 @@ module.exports = {
                     transporter.sendMail(email);
                     authentication.code = code;
                     authentication.isAlive = true;
+                    authentication.state = 1;
                     authentication.managerId = currentId;
+                    await authentication.save();
+                    return authentication;
+                } else {
+                    authentication.managerId = currentId;
+                    authentication.state = -1;
                     await authentication.save();
                     return authentication;
                 }
@@ -81,7 +87,7 @@ module.exports = {
         },
         verifyAuthentication: async (_, { authenticationId, code }) => {
             const authentication = await Authentication.findById(authenticationId);
-            if (authentication.code === code && authentication.isAlive) {
+            if (authentication.code === code && authentication.isAlive === true) {
                 const scholar = await Scholar.findById(authentication.scholarId);
                 if (scholar) {
                     scholar.userId = authentication.userId;

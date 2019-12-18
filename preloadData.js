@@ -78,6 +78,8 @@ db.on('open', async () => {
                         obj['pageStart'] = paper.page_end;
                     if (paper.doi)
                         obj['doi'] = paper.doi;
+                    if (paper.doi)
+                        obj['issn'] = paper.issn;
                     if (paper.volume)
                         obj['volume'] = paper.volume;
                     if (paper.url)
