@@ -27,14 +27,22 @@ db.on('open', async () => {
                 const scholarFrom = await Scholar.findById(fromId);
                 const scholarTo = await Scholar.findById(toId);
                 if (scholarFrom && scholarTo) {
+                    let oldPubs = infos[fromId][toId].pubs; // [{id: ..., title: ...}]
+                    let patchedPubs = [];
+                    for (var pub of oldPubs) {
+                        patchedPubs.push({
+                            paperId: pub.id,
+                            title: pub.title
+                        })
+                    }
                     scholarFrom.coauthors.unshift({
                         scholarId: toId,
-                        papers: infos[fromId][toId].pubs // infos[key].papers
+                        papers: patchedPubs // TODO patch the pub infos[key].papers
                     });
                     await scholarFrom.save();
                     scholarTo.coauthors.unshift({
                         scholarId: fromId,
-                        papers: infos[fromId][toId].pubs
+                        papers: patchedPubs
                     });
                     await scholarTo.save();
                 }
