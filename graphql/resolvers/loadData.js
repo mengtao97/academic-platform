@@ -1,12 +1,15 @@
-const {ApolloError} = require("apollo-server");
+const { ApolloError } = require("apollo-server");
 
 const Scholar = require("../../models/Scholar");
+const { chain } = require("stream-chain")
+const { parser } = require("stream-json")
 const fs = require("fs");
 
 module.exports = {
     Query: {},
     Mutation: {
-        async loadCoAuthors(_, {path}) {
+        async loadCoAuthors(_, { path }) {
+            const pipeline = chain([])
             const content = fs.readFileSync(path, "utf8");
             const rawData = JSON.parse(content);
             const infos = rawData.info;
@@ -37,7 +40,7 @@ module.exports = {
             return failed;
         }
     },
-    async loadExtractedCoAuthors(_, {path}) {
+    async loadExtractedCoAuthors(_, { path }) {
         try {
             const content = fs.readFileSync(path, "utf8");
             const infos = JSON.parse(content);
