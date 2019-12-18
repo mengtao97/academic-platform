@@ -29,12 +29,12 @@ db.on('open', async () => {
                 if (scholarFrom && scholarTo) {
                     scholarFrom.coauthors.unshift({
                         scholarId: toId,
-                        papers: infos[fromId][toId][pubs] // infos[key].papers
+                        papers: infos[fromId][toId].pubs // infos[key].papers
                     });
                     await scholarFrom.save();
                     scholarTo.coauthors.unshift({
                         scholarId: fromId,
-                        papers: infos[fromId][toId][pubs]
+                        papers: infos[fromId][toId].pubs
                     });
                     await scholarTo.save();
                 }
