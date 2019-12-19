@@ -52,12 +52,22 @@ db.on('open', async () => {
                             console.log(`${counter} pairs of scholars are added`)
                         scholarFrom.coauthors.unshift({
                             scholarId: toId,
+                            h_index: infos[fromId][toId].h_index,
+                            n_citation: infos[fromId][toId].n_citation,
+                            n_pubs: infos[fromId][toId].n_pubs,
+                            name: infos[fromId][toId].name,
+                            orgs: infos[fromId][toId].orgs,
                             papers: patchedPubs // TODO patch the pub infos[key].papers
                         });
                         scholarFrom.coauthors = removeDuplicates(scholarFrom.coauthors, 'scholarId');
                         await scholarFrom.save();
                         scholarTo.coauthors.unshift({
                             scholarId: fromId,
+                            h_index: infos[fromId][toId].h_index,
+                            n_citation: infos[fromId][toId].n_citation,
+                            n_pubs: infos[fromId][toId].n_pubs,
+                            name: infos[fromId][toId].name,
+                            orgs: infos[fromId][toId].orgs,
                             papers: patchedPubs
                         });
                         scholarTo.coauthors = removeDuplicates(scholarTo.coauthors, 'scholarId');
