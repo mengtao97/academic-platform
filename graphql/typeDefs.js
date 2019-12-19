@@ -143,6 +143,11 @@ module.exports = gql`
 
     type CoAuthor {
         scholarId: ID
+        h_index: Int
+        n_citation: Int
+        n_pubs: Int
+        name: String
+        orgs: [String]
         papers: [ID]
     }
 
