@@ -13,7 +13,7 @@ module.exports = function GetRecommendedPaperFromUserID(
 
     var fs = require('fs');
     if (!fs.existsSync(file_path)) {
-        call_back([
+        call_back(null, [
             ['big data', 1],
             ['cloud computing', 1],
             ['computer science', 1]
@@ -38,10 +38,8 @@ module.exports = function GetRecommendedPaperFromUserID(
     });
 
     line_reader.on('close', () => {
-        keywords = Object.keys(keywords).map((key) => {
-            return [key, keywords[key]]
-        })
+        keywords = Object.keys(keywords).map(key => [key, keywords[key]])
         keywords = keywords.sort((a, b) => b[1] - a[1]).slice(0, 5)
-        call_back(keywords)
+        call_back(null, keywords)
     })
 }
