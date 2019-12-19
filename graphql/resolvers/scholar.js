@@ -23,12 +23,13 @@ module.exports = {
                 body: {
                     query: {
                         match: { name: params.toString() },
-                    }
+                    },
+                    from: (page - 1) * perPage,
+                    size: perPage,
                 }
             })
-            const numOfPages = Math.ceil(body.hits.hits.length / perPage)
-            const slicedHits = body.hits.hits.slice((page - 1) * perPage, page * perPage);
-            const ids = slicedHits.map(hit => hit._id)
+            const numOfPages = Math.ceil(body.hits.total.value / perPage);
+            const ids = body.hits.hits.map(hit => hit._id)
 
             scholars = await Scholar.find().where('_id').in(ids).exec();
 
