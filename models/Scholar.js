@@ -20,6 +20,11 @@ const scholarSchema = new Schema({
     userId: {type: Schema.Types.ObjectId, ref: 'User'}, // uploader
     coauthors: [{
         scholarId: {type: Schema.Types.ObjectId, ref: 'Scholar'},
+        h_index: Number,
+        n_citation: Number,
+        n_pubs: Number,
+        name: String,
+        orgs: [String],
         papers: [{paperId: {type: Schema.Types.ObjectId, ref: 'Paper'}, title: String}]
     }]
 }).plugin(mongoosastic, {hosts: ['localhost:9200']});
