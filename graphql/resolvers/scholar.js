@@ -26,8 +26,8 @@ module.exports = {
                     }
                 }
             })
-            const slicedHits = body.hits.hits.slice((page - 1) * perPage, page * perPage);
             const numOfPages = Math.ceil(body.hits.hits.length / perPage)
+            const slicedHits = body.hits.hits.slice((page - 1) * perPage, page * perPage);
             const ids = slicedHits.map(hit => hit._id)
 
             scholars = await Scholar.find().where('_id').in(ids).exec();
