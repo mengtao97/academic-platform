@@ -9,42 +9,64 @@ const mongoose = require('mongoose');
 const Scholar = require('../models/Scholar');
 const fs = require("fs");
 
-mongoose.connect("mongodb://localhost:27017/scholarly", { useNewUrlParser: true, useUnifiedTopology: true });
+function removeDuplicates(array, key) {
+    let lookup = new Set();
+    return array.filter(obj => !lookup.has(obj[key]) && lookup.add(obj[key]));
+}
+
+mongoose.connect("mongodb://localhost:27017/scholarly", {useNewUrlParser: true, useUnifiedTopology: true});
 const db = mongoose.connection;
 db.on('open', async () => {
     console.log("Connection established.");
 
     // loading...
     for (let i = 0; i <= 10; ++i) {
-        let path = "/home/ubuntu/data/coauthor_" + i + ".json"
+        console.log(`start working on coauthor_${i}`);
+        let counter = 0;
+
+        let path = "/home/ubuntu/data/coauthor_" + i + ".json";
         const content = fs.readFileSync(path, "utf8");
         const infos = JSON.parse(content);
         const fromIds = Object.keys(infos);
         for (var fromId of fromIds) {
             // check if the property/key is defined in the object itself, not in parent
-            const toIds = Object.keys(infos[fromId]);
-            for (var toId of toIds) {
-                const scholarFrom = await Scholar.findById(fromId);
-                const scholarTo = await Scholar.findById(toId);
-                if (scholarFrom && scholarTo) {
-                    let oldPubs = infos[fromId][toId].pubs; // [{id: ..., title: ...}]
-                    let patchedPubs = [];
-                    for (var pub of oldPubs) {
-                        patchedPubs.push({
-                            paperId: pub.id,
-                            title: pub.title
-                        })
+            const scholarFrom = await Scholar.findById(fromId);
+            if (scholarFrom) {
+                const toIds = Object.keys(infos[fromId]);
+
+                for (var toId of toIds) {
+                    //const scholarFrom = await Scholar.findById(fromId);
+                    const scholarTo = await Scholar.findById(toId);
+                    if (scholarTo) {
+
+                        let oldPubs = infos[fromId][toId].pubs; // [{id: ..., title: ...}]
+                        let patchedPubs = [];
+                        for (var pub of oldPubs) {
+                            patchedPubs.push({
+                                paperId: pub.id,
+                                title: pub.title
+                            })
+                        }
+                        counter = counter + 1;
+                        if (counter % 100 === 0)
+                            console.log(`${counter} pairs of scholars are added`)
+                        scholarFrom.coauthors.unshift({
+                            scholarId: toId,
+                            papers: patchedPubs // TODO patch the pub infos[key].papers
+                        });
+                        scholarFrom.coauthors = removeDuplicates(scholarFrom.coauthors, 'scholarId');
+                        await scholarFrom.save();
+                        scholarTo.coauthors.unshift({
+                            scholarId: fromId,
+                            papers: patchedPubs
+                        });
+                        scholarTo.coauthors = removeDuplicates(scholarTo.coauthors, 'scholarId');
+                        await scholarTo.save();
+
+
+
+
                     }
-                    scholarFrom.coauthors.unshift({
-                        scholarId: toId,
-                        papers: patchedPubs // TODO patch the pub infos[key].papers
-                    });
-                    await scholarFrom.save();
-                    scholarTo.coauthors.unshift({
-                        scholarId: fromId,
-                        papers: patchedPubs
-                    });
-                    await scholarTo.save();
                 }
             }
         }
