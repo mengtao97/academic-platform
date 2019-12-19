@@ -113,21 +113,21 @@ db.on('open', async () => {
     console.log("Connection established.");
 
     // preparing...
-    try {
-        await db.collection("paper").drop();
-        console.log("Dropped `paper` collection.");
-    } catch (err) {
-        console.error("Failed to drop Paper, but it might not be a problem.");
-    }
+    // try {
+    //     await db.collection("paper").drop();
+    //     console.log("Dropped `paper` collection.");
+    // } catch (err) {
+    //     console.error("Failed to drop Paper, but it might not be a problem.");
+    // }
 
-    try {
-        await db.collection("scholars").drop();
-        console.log("Dropped `scholars` collection.")
-    } catch (err) {
-        console.error("Failed to drop Scholars, but it might not be a problem.");
-    }
+    // try {
+    //     await db.collection("scholars").drop();
+    //     console.log("Dropped `scholars` collection.")
+    // } catch (err) {
+    //     console.error("Failed to drop Scholars, but it might not be a problem.");
+    // }
 
-    for (let i = 0; i < 20; ++i) {
+    for (let i = 15; i < 20; ++i) {
         const filePath = `/home/ubuntu/data/papers_${i}.json`
         await loadData(filePath, 'paper')
         console.log(`Loaded; ${filePath}`)
@@ -135,12 +135,12 @@ db.on('open', async () => {
     console.log("All the papers have been imported into the database.");
 
     // loading...
-    for (let i = 0; i <= 10; ++i) {
-        const filePath = `/home/ubuntu/data/author_${i}.json`;
-        await loadData(filePath, 'author');
-        console.log(`Loaded; ${filePath}`)
-    }
-    console.log("All the scholars have been imported into the database.");
+    // for (let i = 0; i <= 10; ++i) {
+    //     const filePath = `/home/ubuntu/data/author_${i}.json`;
+    //     await loadData(filePath, 'author');
+    //     console.log(`Loaded; ${filePath}`)
+    // }
+    // console.log("All the scholars have been imported into the database.");
 
 
 
