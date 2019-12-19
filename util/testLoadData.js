@@ -16,7 +16,10 @@ db.on('open', async () => {
 
     // loading...
     for (let i = 0; i <= 10; ++i) {
-        let path = "/home/ubuntu/data/coauthor_" + i + ".json"
+        console.log(`start working on coauthor_${i}`);
+        let counter = 0;
+
+        let path = "/home/ubuntu/data/coauthor_" + i + ".json";
         const content = fs.readFileSync(path, "utf8");
         const infos = JSON.parse(content);
         const fromIds = Object.keys(infos);
@@ -35,6 +38,9 @@ db.on('open', async () => {
                             title: pub.title
                         })
                     }
+                    counter = counter + 1;
+                    if (counter % 100 === 0)
+                        console.log(`${counter} pairs of scholars are added`)
                     scholarFrom.coauthors.unshift({
                         scholarId: toId,
                         papers: patchedPubs // TODO patch the pub infos[key].papers
