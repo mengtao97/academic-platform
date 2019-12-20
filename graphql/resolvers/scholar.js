@@ -2,6 +2,7 @@ const { ApolloError } = require("apollo-server-express");
 
 const Scholar = require("../../models/Scholar");
 const User = require('../../models/User')
+const CoAuthor = require('../../models/CoAuthor')
 
 
 var log4js = require('log4js');
@@ -68,6 +69,8 @@ module.exports = {
             } catch (el) {
                 isFollowing = false;
             }
+            const coauthors = await CoAuthor.findById(scholarId)
+            scholar.coauthors = coauthors.coauthors;
             return { scholar, isFollowing };
         },
     },
