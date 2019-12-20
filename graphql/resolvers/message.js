@@ -14,7 +14,7 @@ module.exports = {
             for (const each of messages) {
                 console.log(each);
                 const contact = await User.findById(each.senderId != currentId ? each.senderId : each.receiverId); //not me
-                if (addedContacts.has(contact.id))
+                if (!contact || addedContacts.has(contact.id))
                     continue;
                 results.push(contact);
                 addedContacts.add(contact.id);
