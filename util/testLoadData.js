@@ -27,11 +27,15 @@ db.on('open', async () => {
         let path = "/home/ubuntu/tmp/coauthor_" + i + ".json";
         const content = fs.readFileSync(path, "utf8");
         const infos = JSON.parse(content);
-        infos.forEach(item => {
-            const newCoScholar = new coScholarSchema(data);
+        for (var item of infos) {
+            const newCoScholar = new coScholarSchema(item);
             await newCoScholar.save();
-        })
-        const fromIds = Object.keys(infos);
+        }
+        // infos.forEach(item => {
+        //     const newCoScholar = new coScholarSchema(data);
+        //     await newCoScholar.save();
+        // })
+        // const fromIds = Object.keys(infos);
         /*for (var fromId of fromIds) {
             // check if the property/key is defined in the object itself, not in parent
             const scholarFrom = await Scholar.findById(fromId);
