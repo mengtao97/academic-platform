@@ -148,7 +148,7 @@ module.exports = gql`
         n_pubs: Int
         name: String
         orgs: [String]
-        papers: [ID]
+        papers: [Paper]
     }
 
     type Scholar {
