@@ -6,7 +6,7 @@
 
 const mongoose = require('mongoose');
 
-const Scholar = require('../models/Scholar');
+const coAuthorSchema = require('../models/CoAuthor')
 const fs = require("fs");
 
 function removeDuplicates(array, key) {
