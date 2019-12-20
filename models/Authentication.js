@@ -7,8 +7,6 @@ const authenticationSchema = new Schema({
     state: Number,
     content: String,
     createdAt: String,
-    code: String,
-    isAlive: Boolean,
 });
 
 module.exports = model("Authentication", authenticationSchema);
