@@ -11,7 +11,7 @@ const fs = require("fs");
 mongoose.connect("mongodb://localhost:27017/scholarly", { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 db.on('open', async () => {
-    const loadData = (filePath, mode) => {
+    const loadData = (filePath) => {
             const pipeline = chain([
                 fs.createReadStream(filePath),
                 parser(),
@@ -20,7 +20,7 @@ db.on('open', async () => {
             ]);
 
             pipeline.on('data', async data => {
-                const newCoScholar = new coScholarSchema(data);
+                const newCoScholar = new coAuthorSchema(data);
                 await newCoScholar.save();
             });
             return new Promise((resolve, reject) => {
@@ -35,7 +35,7 @@ db.on('open', async () => {
     console.log("Connection established.");
     for (let i = 0; i < 10; ++i) {
         const filePath = `/home/ubuntu/data/coauthor_${i}.json`
-        await loadData(filePath, 'copaper')
+        await loadData(filePath)
         console.log(`Loaded; ${filePath}`)
     }
     console.log("All the papers have been imported into the database.");
