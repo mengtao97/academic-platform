@@ -248,6 +248,7 @@ module.exports = gql`
         isFavorite(paperId:ID):Boolean
 
         currentUser:UserInfo
+        getUserInfo:UserInfo
     }
 
     type Mutation {
