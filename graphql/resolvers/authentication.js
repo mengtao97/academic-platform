@@ -60,7 +60,7 @@ module.exports = {
             const isRoot = !!((await User.findById(currentId)).role);
             const authentication = await Authentication.findById(authenticationId);
             const user = await User.findById(authentication.userId);
-            if (isRoot && authentication) {
+            if (isRoot && authentication && authentication.isAlive === true) {
                 const code = parseInt(Math.random() * 9000 + 1000)
                 if (decision === true) {
                     const email = {
@@ -83,7 +83,7 @@ module.exports = {
                     return authentication;
                 }
             } else
-                throw new ApolloError('权限不足或用户不存在！')
+                throw new ApolloError('更新失败，可能是审核或申请不存在！')
         },
         verifyAuthentication: async (_, { authenticationId, code }) => {
             const authentication = await Authentication.findById(authenticationId);
