@@ -20,15 +20,19 @@ db.on('open', async () => {
     console.log("Connection established.");
 
     // loading...
-    for (let i = 0; i <= 10; ++i) {
+    for (let i = 0; i < 10; ++i) {
         console.log(`start working on coauthor_${i}`);
         let counter = 0;
 
-        let path = "/home/ubuntu/data/coauthor_" + i + ".json";
+        let path = "/home/ubuntu/tmp/coauthor_" + i + ".json";
         const content = fs.readFileSync(path, "utf8");
         const infos = JSON.parse(content);
+        infos.forEach(item => {
+            const newCoScholar = new coScholarSchema(data);
+            await newCoScholar.save();
+        })
         const fromIds = Object.keys(infos);
-        for (var fromId of fromIds) {
+        /*for (var fromId of fromIds) {
             // check if the property/key is defined in the object itself, not in parent
             const scholarFrom = await Scholar.findById(fromId);
             if (scholarFrom) {
@@ -79,7 +83,7 @@ db.on('open', async () => {
                     }
                 }
             }
-        }
+        }*/
     }
     console.log("All the coauthors have been imported into the database.");
 
