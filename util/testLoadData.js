@@ -28,7 +28,7 @@ db.on('open', async () => {
         const content = fs.readFileSync(path, "utf8");
         const infos = JSON.parse(content);
         for (var item of infos) {
-            const newCoScholar = new coScholarSchema(item);
+            const newCoScholar = new coAuthorSchema(item);
             await newCoScholar.save();
         }
         // infos.forEach(item => {
