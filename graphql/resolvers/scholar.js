@@ -74,6 +74,12 @@ module.exports = {
                 scholar.coauthors = coauthors.coauthors;
             return { scholar, isFollowing };
         },
+        getOwnScholar: async (_, __, context) => {
+            const currentId = checkAuth(context).id;
+            const scholar = await Scholar.find({ userId: { $eq: currentId } });
+            //console.log(scholar)
+            return scholar;
+        }
     },
     Mutation: {
         createScholar: async (_, { params }, context) => {

@@ -244,6 +244,7 @@ module.exports = gql`
 
         Scholars(params: String,page:Int, perPage:Int): ScholarsAndPageNum
         findScholarById(scholarId:ID):ScholarAndFollowing
+        getOwnScholar:[Scholar]
         "获取当前用户是否已经收藏该论文"
         isFavorite(paperId:ID):Boolean
 
