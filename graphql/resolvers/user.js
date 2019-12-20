@@ -113,6 +113,10 @@ module.exports = {
             }
             return results;
         },
+        async getUserInfo(_, {id}) {
+            const user = await User.findById(id);
+            return { name, id, avatar, email } = user;
+        },
         async currentUser(_, __, context) {
             const currentId = checkAuth(context).id;
             const user = await User.findById(currentId);
