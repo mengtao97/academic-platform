@@ -71,10 +71,8 @@ module.exports = gql`
         userId: ID
         managerId: ID
         scholarId: ID
-        state: String
+        state: Int
         content: String
-        code: String
-        isAlive: Boolean
     }
 
     type Comment {
@@ -255,11 +253,9 @@ module.exports = gql`
     type Mutation {
         createAuthentication(scholarId:ID,content:String): Authentication
         deleteAuthentication(authenticationId: ID!): String
-        verifyAuthentication(authenticationId:ID, code:String):Scholar
 
         "创建一个学者主页申请。"
-        updateAuthentication(authenticationId: ID!,decision:Boolean): Authentication
-
+        updateAuthentication(authenticationId: ID!,decision:Boolean!): Authentication
 
         createComment(params: CommentInput): Comment
         deleteComment(commentId: ID!): String

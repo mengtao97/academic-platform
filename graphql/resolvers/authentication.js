@@ -9,7 +9,9 @@ const nodemailer = require('nodemailer')
 
 const config = {
     host: 'smtp.qq.com',
-    port: 25,
+    secure: false,
+    host: 'smtp.qq.com',
+    port: 587,
     auth: {
         user: '962217260@qq.com',
         pass: 'hwwbuebetrozbbec'
@@ -61,44 +63,39 @@ module.exports = {
             const authentication = await Authentication.findById(authenticationId);
             const user = await User.findById(authentication.userId);
             if (isRoot && authentication && authentication.state === 0) {
-                const code = parseInt(Math.random() * 9000 + 1000)
                 if (decision === true) {
-                    const email = {
-                        from: '962217260@qq.com',
-                        subject: '激活链接',
-                        to: user.email,
-                        text: "验证码:" + code
-                    };
-                    transporter.sendMail(email);
-                    authentication.code = code;
-                    authentication.isAlive = true;
-                    authentication.state = 1;
-                    authentication.managerId = currentId;
-                    await authentication.save();
-                    return authentication;
+                    const scholar = await Scholar.findById(authentication.scholarId);
+                    if (scholar) {
+                        scholar.userId = authentication.userId;
+                        authentication.state = 1;
+                        authentication.managerId = currentId;
+                        await authentication.save();
+                        await scholar.save();
+                        const email = {
+                            from: '962217260@qq.com',
+                            subject: '认领通知',
+                            to: user.email,
+                            text: "您已通过验证，请查看个人主页！"
+                        };
+                        transporter.sendMail(email);
+                        return authentication;
+                    } else
+                        throw new ApolloError("学者主页不存在！")
                 } else {
                     authentication.managerId = currentId;
                     authentication.state = -1;
                     await authentication.save();
+                    const email = {
+                        from: '962217260@qq.com',
+                        subject: '认领通知',
+                        to: user.email,
+                        text: "您未通过验证！"
+                    };
+                    transporter.sendMail(email);
                     return authentication;
                 }
             } else
                 throw new ApolloError('更新失败，可能是审核或申请不存在！')
         },
-        verifyAuthentication: async (_, { authenticationId, code }) => {
-            const authentication = await Authentication.findById(authenticationId);
-            if (authentication.code === code && authentication.isAlive === true) {
-                const scholar = await Scholar.findById(authentication.scholarId);
-                if (scholar) {
-                    scholar.userId = authentication.userId;
-                    authentication.isAlive = false;
-                    await authentication.save();
-                    await scholar.save();
-                    return scholar;
-                } else
-                    throw new ApolloError("学者主页不存在！")
-            } else
-                throw new ApolloError('验证码错误！')
-        }
     }
 }
