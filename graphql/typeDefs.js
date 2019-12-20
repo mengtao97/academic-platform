@@ -133,6 +133,11 @@ module.exports = gql`
         t: String,
         w: Float
     }
+    
+    type CoPaper {
+        paperId: ID
+        title: String
+    }
 
     type CoAuthor {
         scholarId: ID
@@ -141,7 +146,7 @@ module.exports = gql`
         n_pubs: Int
         name: String
         orgs: [String]
-        papers: [ID]
+        papers: [CoPaper]
     }
 
     type Scholar {
