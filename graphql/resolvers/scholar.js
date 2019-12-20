@@ -1,28 +1,29 @@
-const { ApolloError } = require("apollo-server-express");
+const {ApolloError} = require("apollo-server-express");
 
 const Scholar = require("../../models/Scholar");
 const User = require('../../models/User')
+const CoAuthor = require('../../models/CoAuthor')
 
 
 var log4js = require('log4js');
 const checkAuth = require('../../util/check-auth')
-const { Client } = require('@elastic/elasticsearch')
-const client = new Client({ node: 'http://localhost:9200' })
+const {Client} = require('@elastic/elasticsearch')
+const client = new Client({node: 'http://localhost:9200'})
 
 module.exports = {
     Query: {
-        Scholars: async (_, { params, page, perPage }, context) => {
+        Scholars: async (_, {params, page, perPage}, context) => {
             if (!page)
                 page = 1
             if (!perPage)
                 perPage = 20
 
-            const { body } = await client.search({
+            const {body} = await client.search({
                 index: 'scholars',
                 // type: '_doc', // uncomment this line if you are using Elasticsearch ≤ 6
                 body: {
                     query: {
-                        match: { name: params.toString() },
+                        match: {name: params.toString()},
                     },
                     from: (page - 1) * perPage,
                     size: perPage,
@@ -40,7 +41,7 @@ module.exports = {
             }
             log4js.configure({
                 appenders: {
-                    out: { type: 'stdout' },
+                    out: {type: 'stdout'},
                     app: {
                         type: 'dateFile',
                         filename: "log/scholar/" + token,
@@ -49,15 +50,15 @@ module.exports = {
                     }
                 },
                 categories: {
-                    default: { appenders: ['out', 'app'], level: 'trace' }
+                    default: {appenders: ['out', 'app'], level: 'trace'}
                 }
             });
             var logger = log4js.getLogger('SCHOLAR');
             logger.level = 'trace';
             logger.trace("Query on scholar with: \"" + params + "\" by: " + token);
-            return { scholars, numOfPages };
+            return {scholars, numOfPages};
         },
-        findScholarById: async (_, { scholarId }, context) => {
+        findScholarById: async (_, {scholarId}, context) => {
             const scholar = await Scholar.findById(scholarId);
             try {
                 const currentId = checkAuth(context).id;
@@ -68,11 +69,15 @@ module.exports = {
             } catch (el) {
                 isFollowing = false;
             }
-            return { scholar, isFollowing };
+            const coauthors = await CoAuthor.findById(scholarId)
+            if (coauthors.coauthors)
+                scholar.coauthors = coauthors.coauthors;
+            else scholar.coauthors = []
+            return {scholar, isFollowing};
         },
     },
     Mutation: {
-        createScholar: async (_, { params }, context) => {
+        createScholar: async (_, {params}, context) => {
             const user = checkAuth(context);
             const newScholar = new Scholar({
                 ...params,
@@ -82,7 +87,7 @@ module.exports = {
             })
             return await newScholar.save();
         },
-        deleteScholar: async (_, { scholarId }, context) => {
+        deleteScholar: async (_, {scholarId}, context) => {
             const currentId = checkAuth(context).id;
             const user = await User.findById(currentId);
             const scholar = await Scholar.findById(scholarId);
@@ -92,7 +97,7 @@ module.exports = {
             } else
                 throw new ApolloError("权限不足，不允许进行该操作！")
         },
-        Scholar: async (_, { scholarId, params }, context) => {
+        Scholar: async (_, {scholarId, params}, context) => {
             const currentId = checkAuth(context).id;
             const user = await User.findById(currentId);
             const scholar = await Scholar.findById(scholarId);
@@ -103,7 +108,7 @@ module.exports = {
                 throw new ApolloError("权限不足，不允许进行该操作！");
             }
         },
-        follow: async (_, { scholarId }, context) => {
+        follow: async (_, {scholarId}, context) => {
             const currentId = checkAuth(context).id;
             const user = await User.findById(currentId);
             const scholar = await Scholar.findById(scholarId);//not need the value of scholar,but need to assure the scholar is exists
@@ -120,8 +125,8 @@ module.exports = {
             await user.save();
             return user;
         },
-        addTags: async (_, { params }, context) => {
-            const { scholarId, tags } = params;
+        addTags: async (_, {params}, context) => {
+            const {scholarId, tags} = params;
             const currentId = checkAuth(context).id;
             const user = User.findById(currentId);
             const scholar = await Scholar.findById(scholarId);
@@ -137,8 +142,8 @@ module.exports = {
                 throw new ApolloError('权限不足，不允许进行该操作！');
 
         },
-        removeTags: async (_, { params }, context) => {
-            const { scholarId, tags } = params;
+        removeTags: async (_, {params}, context) => {
+            const {scholarId, tags} = params;
             const currentId = checkAuth(context).id;
             const user = await User.findById(currentId);
             const scholar = await Scholar.findById(scholarId);
@@ -152,7 +157,7 @@ module.exports = {
             } else
                 throw new ApolloError('权限不足，不允许进行该操作！');
         },
-        updateBulletin: async (_, { scholarId, bulletin }, context) => {
+        updateBulletin: async (_, {scholarId, bulletin}, context) => {
             const currentId = checkAuth(context).id;
             const user = User.findById(currentId);
             const scholar = await Scholar.findById(scholarId);
