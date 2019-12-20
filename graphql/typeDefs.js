@@ -253,7 +253,7 @@ module.exports = gql`
     }
 
     type Mutation {
-        createAuthentication(ScholarId:ID,content:String): Authentication
+        createAuthentication(scholarId:ID,content:String): Authentication
         deleteAuthentication(authenticationId: ID!): String
         verifyAuthentication(authenticationId:ID, code:String):Scholar
 

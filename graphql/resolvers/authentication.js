@@ -60,7 +60,7 @@ module.exports = {
             const isRoot = !!((await User.findById(currentId)).role);
             const authentication = await Authentication.findById(authenticationId);
             const user = await User.findById(authentication.userId);
-            if (isRoot && authentication && authentication.isAlive === true) {
+            if (isRoot && authentication && authentication.state === 0) {
                 const code = parseInt(Math.random() * 9000 + 1000)
                 if (decision === true) {
                     const email = {
