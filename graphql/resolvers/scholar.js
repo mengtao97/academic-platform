@@ -70,9 +70,8 @@ module.exports = {
                 isFollowing = false;
             }
             const coauthors = await CoAuthor.findById(scholarId)
-            if (coauthors.coauthors)
+            if (coauthors)
                 scholar.coauthors = coauthors.coauthors;
-            else scholar.coauthors = []
             return {scholar, isFollowing};
         },
     },
