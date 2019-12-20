@@ -24,7 +24,7 @@ module.exports = {
     Query: {
         Authentications: async (_, { authenticationId }) => {
             if (!!authenticationId)
-                return [await Authentication.findById(authenticationId)]
+                return [await Authentication.findById(authenticationId).sort({ createdAt: -1 })]
             else
                 return await Authentication.find()
         }
