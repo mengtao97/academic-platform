@@ -28,6 +28,10 @@ db.on('open', async () => {
         const content = fs.readFileSync(path, "utf8");
         const infos = JSON.parse(content);
         for (var item of infos) {
+            item.coauthors.papers = item.coauthors.pubs;
+            for (var pap of item.coauthors.papers) {
+                pap.paperId = pap.id;
+            }
             const newCoScholar = new coAuthorSchema(item);
             await newCoScholar.save();
         }
