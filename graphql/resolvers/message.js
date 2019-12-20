@@ -12,6 +12,7 @@ module.exports = {
             const results = [];
             const addedContacts = new Set();
             for (const each of messages) {
+                console.log(each);
                 const contact = await User.findById(each.senderId != currentId ? each.senderId : each.receiverId); //not me
                 if (addedContacts.has(contact.id))
                     continue;

@@ -2,13 +2,6 @@ const { gql } = require("apollo-server-express");
 
 module.exports = gql`
 
-    input AuthenticationInput {
-        managerId: ID
-        scholarId: ID
-        state: Int
-        content: String
-    }
-
     input CommentInput {
         paperId: ID
         body: String
@@ -255,7 +248,7 @@ module.exports = gql`
     }
 
     type Mutation {
-        createAuthentication(params: AuthenticationInput): Authentication
+        createAuthentication(ScholarId:ID,content:String): Authentication
         deleteAuthentication(authenticationId: ID!): String
         verifyAuthentication(authenticationId:ID, code:String):Scholar
 
