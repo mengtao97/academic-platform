@@ -1,8 +1,8 @@
 // @ts-check
 const mongoose = require('mongoose');
 
-const PaperSchema = require('./models/Paper');
-const ScholarSchema = require('./models/Scholar');
+const PaperSchema = require('../models/Paper');
+const ScholarSchema = require('../models/Scholar');
 
 const { chain } = require("stream-chain");
 const { parser } = require("stream-json");
